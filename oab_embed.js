@@ -1,4 +1,17 @@
-// start with a simple set of helper functions
+/* OA.Works embed library. 
+   MIT licence.
+   by Mark MacGillivray.
+   
+   Can be minified in various ways. E.g. use terser:
+   npm install -g terser
+   terser oab_embed.js -c -m > oab_embed.min.js
+*/
+
+/* Start with a simple set of helper functions. 
+   To make the embed as simple and compatible as possible it doesn't rely on 
+   anything else, so these helpers make it a bit easier to use default js to 
+   do things like iterate over sets of elements, show/hide, alter css, make 
+   ajax requests, get/set element values/attributes, or add/remove elements. */
 var _OA, _oab,
   indexOf = [].indexOf;
 
@@ -105,14 +118,14 @@ _OA.get = function(els, attr) {
     if (attr == null) {
       try {
         res = el.value;
-      } catch (error1) {}
+      } catch (err) {}
       if (typeof res === 'string' && !res.length) {
         res = void 0;
       }
     }
     try {
       return res != null ? res : res = el.getAttribute(attr);
-    } catch (error1) {}
+    } catch (err) {}
   });
   return res;
 };
@@ -123,11 +136,11 @@ _OA.set = function(els, attr, val) {
     if ((val == null) || attr === 'value' || attr === 'val') {
       try {
         return el.value = val == null ? attr : val;
-      } catch (error1) {}
+      } catch (err) {}
     } else {
       try {
         return el.setAttribute(attr, val);
-      } catch (error1) {}
+      } catch (err) {}
     }
   });
 };
@@ -142,8 +155,7 @@ _OA.checked = function(els) {
 };
 
 _OA.html = function(els, html, append, show) {
-  var ref, rs;
-  rs = [];
+  var rs = [];
   _OA.each(els, function(el) {
     if (typeof html === 'string') {
       el.innerHTML = (append ? el.innerHTML : '') + html;
@@ -154,7 +166,7 @@ _OA.html = function(els, html, append, show) {
     }
   });
   if (rs.length === 1) {
-    return (ref = rs[0]) != null ? ref : '';
+    return rs[0];
   } else if (rs.length) {
     return rs;
   } else {
@@ -173,7 +185,7 @@ _OA.remove = function(els) {
 };
 
 _OA.class = function(el, cls) {
-  var c, classes, i, len, ref, rs;
+  var c, classes, i, len, parts, rs;
   rs = [];
   classes = el.getAttribute('class');
   if (classes == null) {
@@ -190,9 +202,9 @@ _OA.class = function(el, cls) {
     }
     el.setAttribute('class', classes);
   }
-  ref = classes.split(' ');
-  for (i = 0, len = ref.length; i < len; i++) {
-    c = ref[i];
+  parts = classes.split(' ');
+  for (i = 0, len = parts.length; i < len; i++) {
+    c = parts[i];
     if (indexOf.call(rs, c) < 0) {
       rs.push(c);
     }
@@ -219,12 +231,12 @@ _OA.has = function(el, cls) {
 
 _OA.css = function(els, key, val) {
   return _OA.each(els, function(el) {
-    var i, k, len, p, ps, ref, ref1, s, ss, style;
-    s = (ref = _OA.get(el, 'style')) != null ? ref : '';
+    var i, k, len, p, ps, parts, s, ss, style;
+    s = _OA.get(el, 'style');
     style = {};
-    ref1 = s.split(';');
-    for (i = 0, len = ref1.length; i < len; i++) {
-      p = ref1[i];
+    parts = (typeof s === 'string' ? s : '').split(';');
+    for (i = 0, len = parts.length; i < len; i++) {
+      p = parts[i];
       ps = p.split(':');
       if (ps.length === 2) {
         style[ps[0].trim()] = ps[1].trim();
@@ -254,23 +266,21 @@ _OA.jx = function(url, data, success, error) {
   xhr.open((data != null ? 'POST' : 'GET'), url);
   xhr.send(data);
   xhr.onload = function() {
-    var err;
     if (xhr.status !== 200) {
       try {
         error(xhr);
-      } catch (error1) {}
+      } catch (err) {}
     } else {
       try {
         success(JSON.parse(xhr.response), xhr);
-      } catch (error1) {
-        err = error1;
+      } catch (err) {
         console.log(err);
         try {
           success(xhr);
-        } catch (error1) {
+        } catch (err) {
           try {
             error(xhr);
-          } catch (error1) {}
+          } catch (err) {}
         }
       }
     }
@@ -281,77 +291,83 @@ _OA.jx = function(url, data, success, error) {
   return xhr.onerror = function(err) {
     try {
       return error(err);
-    } catch (error1) {}
+    } catch (err) {}
   };
 };
 
-// ==============================================================================
+
+
+/* =============================================================================
+   The main function definition, which configures the "plugin" to run based on 
+   any option values provided at instantiation. See below at the bottom of this 
+   file for examples of it being called to instantiate particular "kinds" of 
+   plugin, for different features, for example instantill and shareyourpaper. */
 _oab = function(opts) {
   var ap, c, configs, cs, csk, csv, eq, i, j, len, len1, o;
-  try {
+  try { // set the default options
     if (opts == null) {
       opts = {};
     }
     for (o in opts) {
       this[o] = opts[o];
     }
-    if (this.uid == null) {
-      this.uid = 'anonymous';
-    }
-    if (this.api == null) {
+    if (this.api == null) { // default API URL to contact
       this.api = window.location.host.includes('dev.') ? 'https://beta.oa.works' : 'https://api.oa.works';
     }
     if (this.plugin == null) {
       this.plugin = 'instantill'; // has to be defined at startup, as either instantill or shareyourpaper
     }
     if (this.element == null) {
-      this.element = '#' + this.plugin;
+      this.element = '#' + this.plugin; // which element on the page to insert the plugin into
     }
     if (this.pushstate == null) {
       this.pushstate = true; // if true, the embed will try to add page state changes to the browser state manager
     }
+    if (this.uid == null) {
+      this.uid = 'anonymous'; // optional user ID for config and tracking usage
+    }
+    if (this.config == null) {
+      this.config = {}; // a config object from the user account if available
+    }
     if (this.local == null) {
       this.local = false; // local storage of config turned off by default for now
     }
-    if (this.config == null) {
-      this.config = {};
-    }
-    if (this.data == null) {
+    if (this.data == null) { // a place to store data returned from API calls
       this.data = {};
     }
-    if (this.f == null) {
+    if (this.f == null) { // a place to store API find details
       this.f = {};
     }
-    if (this.template == null) {
+    if (this.template == null) { // the plugin html template to use
       this.template = _oab[this.plugin + '_template'];
     }
-    if (this.css == null) {
+    if (this.css == null) { // there is default css defined below, or a custom set could be passed in.
       this.css = _oab.css;
     }
     this._loading = false; // tracks when loads are occurring
     this.submit_after_metadata = false; // used by instantill to track if metadata has been provided by user
     this.needmore = false; // used by instantill to track that more metadata is required (e.g. if title is too short)
     this.file = false; // used by syp to store the file for sending to backend
-    if (this.demo == null) {
-      this.demo = window.location.href.includes('/demo') && (window.location.href.includes('openaccessbutton.') || window.location.href.includes('shareyourpaper.') || window.location.href.includes('instantill.'));
+    if (this.demo == null) { // just allows for some demo usage on our own site / docs
+      this.demo = window.location.href.includes('/demo') && (window.location.href.includes('oa.works') || window.location.href.includes('openaccessbutton.') || window.location.href.includes('shareyourpaper.') || window.location.href.includes('instantill.'));
     }
     if (this.loaded != null) {
       _OA.loaded = this.loaded; // if this is set to a function, it will be passed to _leviathan loaded, which gets run after every ajax call completes. It is also called directly after every configure
     }
-    if (window.location.search.includes('local=')) {
+    if (window.location.search.includes('local=')) { // can set local via the URL for testing
       this.local = window.location.search.includes('local=true') ? true : false;
     }
     if (window.location.search.includes('clear=') || this.local === false) {
-      try {
+      try { // can clear local storage via the URL, helps with testing
         localStorage.removeItem('_oab_config_' + this.plugin);
-      } catch (error1) {}
+      } catch (err) {}
     }
     if (window.location.search.includes('config=')) {
-      try {
+      try { // can provide a config via the URL, mostly helpful for testing, could have some real world uses.
         this.config = JSON.parse(window.location.search.split('config=')[1].split('&')[0].split('#')[0]);
-      } catch (error1) {}
+      } catch (err) {}
     }
-    if (window.location.search.includes('config.')) {
+    if (window.location.search.includes('config.')) { // allow for specific config variables as well as whole object above
       configs = window.location.search.split('config.');
       configs.shift();
       for (i = 0, len = configs.length; i < len; i++) {
@@ -364,10 +380,10 @@ _oab = function(opts) {
         }
       }
     }
-    setTimeout(() => {
+    setTimeout(() => { // run the configure step, which attempts to set values based on the config, and also does a remote request for a config if appropriate (see below)
       return this.configure();
     }, 1);
-    if (!this.config.autorun_off) {
+    if (!this.config.autorun_off) { // whether or not to trigger on page load, and what to do if so
       ap = typeof this.config.autorunparams === 'string' && this.config.autorunparams.length ? this.config.autorunparams.split(',') : typeof this.config.autorunparams === 'object' ? this.config.autorunparams : ['doi', 'title', 'url', 'atitle', 'rft_id', 'journal', 'issn', 'year', 'author'];
       if (typeof ap === 'string') {
         ap = ap.replace(/"/g, '').replace(/'/g, '').split(',');
@@ -386,43 +402,45 @@ _oab = function(opts) {
         this.data.doi = '10.' + window.location.href.split('?')[0].split('/10.')[1].replace(/\/$/, '');
       }
     }
-    if (window.location.search.includes('email=')) {
+    if (window.location.search.includes('email=')) { // can provide the email of the requestee in URL
       this.data.email = window.location.search.split('email=')[1].split('&')[0].split('#')[0];
       _OA.remove('#_oab_collect_email');
     }
-    if (window.location.search.includes('confirmed=')) {
+    if (window.location.search.includes('confirmed=')) { // can state in the URL if the user already confirmed the file to upload
       this.data.confirmed = window.location.search.split('confirmed=')[1].split('&')[0].split('#')[0];
     }
-    if (window.location.search.includes('refresh=true')) {
+    if (window.location.search.includes('refresh=true')) { // optionally attempts to pass a refersh param to the API to get fresh results
       this.data.refresh = true;
     }
-    if (this.data.doi || (this.plugin === 'instantill' && (this.data.title || this.data.url))) {
+    if (this.data.doi || (this.plugin === 'instantill' && (this.data.title || this.data.url))) { // if data was provided at instantiation, do a find on it immediately
       this.find();
     }
     window.addEventListener("popstate", (pe) => {
       return this.state(pe);
     });
     return this;
-  } catch (error1) {
+  } catch (err) {
     return this.ping('instantill_or_shareyourpaper_try_initialise_catch');
   }
 };
 
-_oab.prototype.cml = function() {
-  var ref, ref1, ref2;
-  return (ref = (ref1 = (ref2 = this.config.problem) != null ? ref2 : this.config.owner) != null ? ref1 : this.config.email) != null ? ref : '';
+/* Now add methods to the _oab prototype. Some methods here will be general and 
+   used by multiple plugins, whilst others are specific to one */
+_oab.prototype.cml = function() { // a little helper to pick which email address to send to
+  return this.config.problem ? this.config.problem : (this.config.owner ? this.config.owner : (this.config.email ? this.config.email : ''));
 };
 
-_oab.prototype.contact = function() {
+_oab.prototype.contact = function() { // a helper to set a "contact us" link depending on context
   return 'Please try ' + (this.cml() ? '<a id="_oab_contact_library" href="mailto:' + this.cml() + '">contacting us</a>' : 'contacting us') + ' directly';
 };
 
 _oab.prototype.loading = function(load) {
+  // controls what is visible on the plugin when something is happening and the user is waiting
   _OA.hide('#_oab_error');
   if (load !== true && (this._loading || load === false)) {
     try {
       clearInterval(this._loading);
-    } catch (error1) {}
+    } catch (err) {}
     this._loading = false;
     return _OA.each('._oab_loading', (el) => {
       if (_OA.has(el, '_oab_continue')) {
@@ -445,11 +463,11 @@ _oab.prototype.loading = function(load) {
     _OA.html('._oab_deposit', 'Depositing .');
     _OA.html('._oab_confirm', 'Depositing .');
     return this._loading = setInterval((function() {
-      var button, dots, i, len, ref, results;
-      ref = _OA.gebc('._oab_loading');
+      var button, dots, i, len, buttons, results;
+      buttons = _OA.gebc('._oab_loading');
       results = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        button = ref[i];
+      for (i = 0, len = buttons.length; i < len; i++) {
+        button = buttons[i];
         dots = button.innerHTML.split('.');
         if (dots.length >= 4) {
           results.push(button.innerHTML = dots[0]);
@@ -462,15 +480,15 @@ _oab.prototype.loading = function(load) {
   }
 };
 
-_oab.prototype.state = function(pop) {
-  var extra, extras, i, k, len, ref, u;
+_oab.prototype.state = function(pop) { // keeps track of pushing state changes to the URL params (optional)
+  var extra, extras, i, k, len, u;
   if (this.pushstate) {
     try {
       u = window.location.pathname;
       if (pop == null) {
         if (window.location.href.includes('shareyourpaper.org')) {
           if (window.location.href.includes('/10.') || window.location.href.replace(/\//g, '').endsWith('.org')) {
-            u = window.location.href.split('10.')[0] + ((ref = this.data.doi) != null ? ref : '') + window.location.search + window.location.hash;
+            u = window.location.href.split('10.')[0] + (this.data.doi ? this.data.doi : '') + window.location.search + window.location.hash;
           } else {
             u += window.location.search.split('?doi=')[0].split('&doi=')[0];
             u += !u.includes('?') ? '?' : '&';
@@ -499,17 +517,18 @@ _oab.prototype.state = function(pop) {
         // what to do with the pop event? for now just triggers a restart if user tries to go back
         return this.restart();
       }
-    } catch (error1) {}
+    } catch (err) {}
   }
 };
 
 _oab.prototype.restart = function(e, val, err) {
+  // everything needed to restart the plugin back to original settings as if the page had just relaoded
   var gf;
   try {
     if (e.target.parentElement.id !== '_oab_permissionemail') {
       e.preventDefault();
     }
-  } catch (error1) {}
+  } catch (err) {}
   this.data = {};
   this.f = {};
   this.needmore = false;
@@ -534,6 +553,7 @@ _oab.prototype.restart = function(e, val, err) {
 };
 
 _oab.prototype.ping = function(what) {
+  // sends a tracking message to the API which can be sent on certain events or errors
   var url;
   try {
     if (!what.includes(this.plugin)) {
@@ -550,9 +570,12 @@ _oab.prototype.ping = function(what) {
       url += '&live=' + this.config.live;
     }
     return _OA.jx(url);
-  } catch (error1) {}
+  } catch (err) {}
 };
 
+/* panel and section are optionally used to control which template panel, and 
+   which section of that panel, is visible at page load. Mostly useful for 
+   testing */
 _oab.prototype.panel = function(panel, section) {
   var he;
   if (he = _OA.gebi('_oab_' + (panel.startsWith('_oab_') ? panel.replace('_oab_', '') : panel))) {
@@ -563,7 +586,6 @@ _oab.prototype.panel = function(panel, section) {
     }
   }
 };
-
 _oab.prototype.section = function(section) {
   var fe;
   // useful for demo/test, just shows a specific section within a panel
@@ -577,92 +599,15 @@ _oab.prototype.section = function(section) {
   }
 };
 
-_oab.prototype.submit = function(e) { // only used by instantill
-  var data, i, k, len, nfield, ou, ref, ref1, ref10, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9;
-  try {
-    try {
-      e.preventDefault();
-    } catch (error1) {}
-    if (!this.openurl() && !this.data.email && _OA.gebi('#_oab_email')) {
-      return this.validate();
-    } else if (JSON.stringify(this.f) === '{}' || (!((ref = this.f.metadata) != null ? ref.title : void 0) || !((ref1 = this.f.metadata) != null ? ref1.journal : void 0) || !((ref2 = this.f.metadata) != null ? ref2.year : void 0))) {
-      if (this.submit_after_metadata) {
-        return this.done(false);
-      } else {
-        this.submit_after_metadata = true;
-        return this.metadata();
-      }
-    } else {
-      this.loading();
-      data = {
-        match: this.f.input,
-        email: this.data.email,
-        from: this.uid,
-        plugin: this.plugin,
-        embedded: window.location.href
-      };
-      data.config = this.config;
-      data.metadata = (ref3 = this.f.metadata) != null ? ref3 : {};
-      ref4 = ['title', 'journal', 'year', 'doi'];
-      for (i = 0, len = ref4.length; i < len; i++) {
-        k = ref4[i];
-        if (!data.metadata[k] && this.data[k]) {
-          data.metadata[k] = this.data[k];
-        }
-        if (data.metadata.doi && data.metadata.doi.startsWith('http')) {
-          data.metadata.url = data.metadata.doi;
-          delete data.metadata.doi;
-        }
-      }
-      nfield = this.config.notes ? this.config.notes : 'notes';
-      if (this.data.usermetadata) {
-        data[nfield] = 'The user provided some metadata. ';
-      }
-      if (this.config.pilot) {
-        data.pilot = this.config.pilot;
-      }
-      if (this.config.live) {
-        data.live = this.config.live;
-      }
-      if (((ref5 = this.f) != null ? (ref6 = ref5.ill) != null ? ref6.subscription : void 0 : void 0) || ((ref7 = this.f) != null ? ref7.url : void 0)) {
-        if (typeof data[nfield] !== 'string') {
-          data[nfield] = '';
-        } else {
-          data[nfield] += ' ';
-        }
-        if ((ref8 = this.f.ill) != null ? ref8.subscription : void 0) {
-          data[nfield] += 'Subscription check done, found ' + ((ref9 = this.f.ill.subscription.url) != null ? ref9 : (this.f.ill.subscription.journal ? 'journal' : 'nothing')) + '. ';
-        }
-        if (this.f.metadata != null) {
-          data[nfield] += 'OA availability check done, found ' + ((ref10 = this.f.url) != null ? ref10 : 'nothing') + '. ';
-        }
-      }
-      ou = this.openurl();
-      if (ou && !data.email) {
-        data.forwarded = true;
-      }
-      if (this.demo === true) {
-        console.log('Not POSTing ILL and not forwarding to ' + ou + ' for demo purposes');
-        return console.log(data);
-      } else {
-        return _OA.jx(this.api + '/ill', data, (res) => {
-          return this.done(res);
-        }, () => {
-          return this.done(false);
-        });
-      }
-    }
-  } catch (error1) {
-    return this.ping('instantill_try_submit_catch');
-  }
-};
-
 _oab.prototype.validate = function() {
-  var email, ref;
+  // validate any email provided by the user before proceeding to deposit etc
+  var email;
   if (this.config.terms && !_OA.checked('#_oab_read_terms')) { // instantill terms
     return _OA.show('#_oab_error', '<p>Please agree to the terms first.</p>');
   } else {
-    email = ((ref = _OA.get('#_oab_email')) != null ? ref : '').trim();
+    email = _OA.get('#_oab_email');
+    if (typeof email !== 'string') email = '';
+    email = email.trim();
     if (!email.length) {
       _OA.show('#_oab_error', '<p>Please provide your university email address.</p>');
       _OA.css('#_oab_email', 'border-color', '#f04717');
@@ -695,21 +640,107 @@ _oab.prototype.validate = function() {
   }
 };
 
-_oab.prototype.metadata = function(submitafter) { // only used by instantill
-  var i, len, m, ref, ref1, ref2, ref3;
-  ref = ['title', 'year', 'journal', 'doi'];
-  for (i = 0, len = ref.length; i < len; i++) {
-    m = ref[i];
-    if ((((ref1 = this.f) != null ? (ref2 = ref1.metadata) != null ? ref2[m] : void 0 : void 0) != null) || (this.data[m] != null)) {
-      _OA.set('#_oab_' + m, ((ref3 = this.f.metadata) != null ? ref3 : this.data)[m]);
+_oab.prototype.submit = function(e) {
+  // only used by instantill
+  // sends an API call to start an ILL request
+  var data, i, k, len, nfield, ou, keys;
+  try {
+    try {
+      e.preventDefault();
+    } catch (err) {}
+    if (!this.openurl() && !this.data.email && _OA.gebi('#_oab_email')) {
+      return this.validate();
+    } else if (JSON.stringify(this.f) === '{}' || this.f.metadata == undefined ||  (!this.f.metadata.title || !this.f.metadata.journal || !this.f.metadata.year)) {
+      if (this.submit_after_metadata) {
+        return this.done(false);
+      } else {
+        this.submit_after_metadata = true;
+        return this.metadata();
+      }
+    } else {
+      this.loading();
+      data = {
+        match: this.f.input,
+        email: this.data.email,
+        from: this.uid,
+        plugin: this.plugin,
+        embedded: window.location.href
+      };
+      data.config = this.config;
+      data.metadata = this.f.metadata ? this.f.metadata : {};
+      keys = ['title', 'journal', 'year', 'doi'];
+      for (i = 0, len = keys.length; i < len; i++) {
+        k = keys[i];
+        if (!data.metadata[k] && this.data[k]) {
+          data.metadata[k] = this.data[k];
+        }
+        if (data.metadata.doi && data.metadata.doi.startsWith('http')) {
+          data.metadata.url = data.metadata.doi;
+          delete data.metadata.doi;
+        }
+      }
+      nfield = this.config.notes ? this.config.notes : 'notes';
+      if (this.data.usermetadata) {
+        data[nfield] = 'The user provided some metadata. ';
+      }
+      if (this.config.pilot) {
+        data.pilot = this.config.pilot;
+      }
+      if (this.config.live) {
+        data.live = this.config.live;
+      }
+      if ((this.f !== undefined && this.f.ill !== undefined && this.f.ill.subscription !== undefined) || (this.f !== undefined && this.f.url)) {
+        if (typeof data[nfield] !== 'string') {
+          data[nfield] = '';
+        } else {
+          data[nfield] += ' ';
+        }
+        if (this.f.ill !== undefined && this.f.ill.subscription) {
+          data[nfield] += 'Subscription check done, found ' + (this.f.ill.subscription.url ? this.f.ill.subscription.url : (this.f.ill.subscription.journal ? 'journal' : 'nothing')) + '. ';
+        }
+        if (this.f.metadata != null) {
+          data[nfield] += 'OA availability check done, found ' + (this.f.url ? this.f.url : 'nothing') + '. ';
+        }
+      }
+      ou = this.openurl();
+      if (ou && !data.email) {
+        data.forwarded = true;
+      }
+      if (this.demo === true) {
+        console.log('Not POSTing ILL and not forwarding to ' + ou + ' for demo purposes');
+        return console.log(data);
+      } else {
+        return _OA.jx(this.api + '/ill', data, (res) => {
+          return this.done(res);
+        }, () => {
+          return this.done(false);
+        });
+      }
+    }
+  } catch (err) {
+    return this.ping('instantill_try_submit_catch');
+  }
+};
+
+_oab.prototype.metadata = function(submitafter) {
+  // only used by instantill
+  // sets the visible metadata on the page after a find
+  var i, len, m, keys;
+  keys = ['title', 'year', 'journal', 'doi'];
+  for (i = 0, len = keys.length; i < len; i++) {
+    m = keys[i];
+    if ((this.f !== undefined && this.f.metadata !== undefined && this.f.metadata[m] !== undefined) || this.data[m] !== undefined) {
+      _OA.set('#_oab_' + m, (this.f.metadata ? this.f.metadata : this.data)[m]);
     }
   }
   _OA.hide('._oab_panel');
   return _OA.show('#_oab_metadata');
 };
 
-_oab.prototype.openurl = function() { // only used by instantill
-  var author, config, d, defaults, i, k, len, notes, ref, ref1, ref2, ref3, ref4, ref5, ref6, url, v;
+_oab.prototype.openurl = function() { 
+  // only used by instantill
+  // constructs an "open URL" to forward a user to, where they can request an article
+  var author, config, d, defaults, i, k, len, notes, url, v;
   if (!this.config.ill_form) {
     return '';
   } else {
@@ -735,46 +766,45 @@ _oab.prototype.openurl = function() { // only used by instantill
       url += config.ill_added_params.replace('?', '') + '&';
     }
     url += config.sid + '=InstantILL&';
-    for (k in (ref = this.f.metadata) != null ? ref : {}) {
+    for (k in (this.f.metadata ? this.f.metadata : {})) {
       v = false;
       if (k === 'author') {
         if (typeof this.f.metadata.author === 'string') {
           v = this.f.metadata.author;
         } else if (Array.isArray(this.f.metadata.author)) {
           v = '';
-          ref1 = this.f.metadata.author;
-          for (i = 0, len = ref1.length; i < len; i++) {
-            author = ref1[i];
+          for (i = 0, len = this.f.metadata.author.length; i < len; i++) {
+            author = this.f.metadata.author[i];
             try {
               if (v.length) {
                 v += ', ';
               }
               v += typeof author === 'string' ? author : typeof author === 'object' && author.family ? author.family + (author.given ? ', ' + author.given : '') : JSON.stringify(author);
-            } catch (error1) {}
+            } catch (err) {}
           }
         }
       } else if (k === 'doi' || k === 'pmid' || k === 'pmc' || k === 'pmcid' || k === 'url' || k === 'journal' || k === 'title' || k === 'year' || k === 'issn' || k === 'volume' || k === 'issue' || k === 'page' || k === 'crossref_type' || k === 'type' || k === 'publisher' || k === 'published' || k === 'notes') {
         v = this.f.metadata[k];
       }
       if (v) {
-        url += ((ref2 = config[k]) != null ? ref2 : k) + '=' + encodeURIComponent(v) + '&';
+        url += (config[k] ? config[k] : k) + '=' + encodeURIComponent(v) + '&';
       }
     }
     notes = this.data.usermetadata ? 'The user provided some metadata. ' : '';
-    if ((ref3 = this.f.ill) != null ? ref3.subscription : void 0) {
-      notes += 'Subscription check done, found ' + ((ref4 = this.f.ill.subscription.url) != null ? ref4 : (this.f.ill.subscription.journal ? 'journal' : 'nothing')) + '. ';
+    if (this.f.ill !== undefined && this.f.ill.subscription !== undefined) {
+      notes += 'Subscription check done, found ' + (this.f.ill.subscription.url ? this.f.ill.subscription.url : (this.f.ill.subscription.journal ? 'journal' : 'nothing')) + '. ';
     }
     if (this.f.metadata != null) {
-      notes += 'OA availability check done, found ' + ((ref5 = this.f.url) != null ? ref5 : 'nothing') + '. ';
+      notes += 'OA availability check done, found ' + (this.f.url ? this.f.url : 'nothing') + '. ';
     }
     if (notes) {
-      url += '&' + ((ref6 = this.config.notes) != null ? ref6 : 'notes') + '=' + notes;
+      url += '&' + (this.config.notes ? this.config.notes : 'notes') + '=' + notes;
     }
     return url.replace('/&&/g', '&');
   }
 };
 
-_oab.prototype.done = function(res, msg) {
+_oab.prototype.done = function(res, msg) { // all the things to do when a plugin is done
   var ou;
   this.loading(false);
   if (ou = this.openurl()) {
@@ -806,17 +836,20 @@ _oab.prototype.done = function(res, msg) {
   }
 };
 
-_oab.prototype.deposit = function(e) { // only used by shareyourpaper
-  var d, data, fl, info, md, ref, ref1, ref2;
+_oab.prototype.deposit = function(e) {
+  // only used by shareyourpaper
+  // takes a file provided by user upload button and sends it to the API for 
+  // deposit to institutional repository
+  var d, data, fl, info, md;
   try {
     try {
       e.preventDefault();
-    } catch (error1) {}
+    } catch (err) {}
     if (!this.data.email && _OA.gebi('#_oab_email')) {
       return this.validate();
     } else if (this.demo === true && (this.data.doi != null) && this.data.doi.startsWith('10.1234/oab-syp-')) {
       if (this.data.doi !== '10.1234/oab-syp-confirm') { // demo successful deposit
-        info = '<p>You\'ll soon find your paper freely available in ' + ((ref = this.config.repo_name) != null ? ref : 'ScholarWorks') + ', Google Scholar, Web of Science, and other popular tools.';
+        info = '<p>You\'ll soon find your paper freely available in ' + (this.config.repo_name ? this.config.repo_name : 'ScholarWorks') + ', Google Scholar, Web of Science, and other popular tools.';
         info += '<h3>Your paper is now freely available at this link:</h3>';
         _OA.html('#_oab_zenodo_embargo', info);
         _OA.set('#_oab_zenodo_url', 'https://zenodo.org/record/3703317');
@@ -844,7 +877,7 @@ _oab.prototype.deposit = function(e) { // only used by shareyourpaper
         from: this.uid,
         plugin: this.plugin,
         embedded: window.location.href,
-        metadata: (ref1 = this.f) != null ? ref1.metadata : void 0
+        metadata: (this.f !== undefined ? this.f.metadata : undefined)
       };
       if (this.demo === true) {
         data.demo = true;
@@ -856,7 +889,7 @@ _oab.prototype.deposit = function(e) { // only used by shareyourpaper
       if (this.data.confirmed) {
         data.confirmed = this.data.confirmed;
       }
-      if (typeof ((ref2 = this.f) != null ? ref2.url : void 0) === 'string') {
+      if (this.f !== undefined && typeof this.f.url === 'string') {
         data.redeposit = this.f.url;
       }
       if (this.config.pilot) {
@@ -882,24 +915,23 @@ _oab.prototype.deposit = function(e) { // only used by shareyourpaper
         data = this.file;
       }
       return _OA.jx(this.api.replace('api.', '').replace('://', '://bg.') + '/deposit', data, (res) => {
-        var ref10, ref11, ref12, ref13, ref3, ref4, ref5, ref6, ref7, ref8, ref9;
         this.loading(false);
         if (typeof this.file !== 'boolean') {
-          if (((ref3 = res.zenodo) != null ? ref3.already : void 0) || (this.data.confirmed && !((ref4 = res.zenodo) != null ? ref4.url : void 0))) {
+          if ((res.zenodo !== undefined && res.zenodo.already) || (this.data.confirmed && (res.zenodo === undefined || !res.zenodo.url))) {
             return this.done('check');
           } else if (res.error) {
             // if we should be able to deposit but can't, we stick to the positive response and the file will be manually checked
             return this.done('partial');
-          } else if ((ref5 = res.zenodo) != null ? ref5.url : void 0) {
+          } else if (res.zenodo !== undefined && res.zenodo.url) {
             // deposit was possible, show the user a congrats page with a link to the item in zenodo
             _OA.set('#_oab_zenodo_url', res.zenodo.url);
             if (res.embargo) {
-              info = '<p>You\'ve done your part for now. Unfortunately, ' + ((ref6 = (ref7 = (ref8 = this.f) != null ? (ref9 = ref8.metadata) != null ? ref9.journal_short : void 0 : void 0) != null ? ref7 : (ref10 = this.f) != null ? (ref11 = ref10.metadata) != null ? ref11.journal : void 0 : void 0) != null ? ref6 : 'the journal') + ' won\'t let us make it public until ';
-              info += (new Date(parseInt(res.embargo))).toDateString();
-              info += '. After release, you\'ll find your paper on ' + ((ref12 = this.config.repo_name) != null ? ref12 : 'ScholarWorks') + ', Google Scholar, Web of Science.</p>';
+              info = '<p>You\'ve done your part for now. Unfortunately, ' + (this.f !== undefined && this.f.metadata !== undefined && this.f.metadata.shortname ? this.f.metadata.shortname : (this.f !== undefined && this.f.metadata !== undefined && this.f.metadata.journal ? this.f.metadata.journal : 'the journal')) + ' won\'t let us make it public until ';
+              info += (new Date(res.embargo)).toLocaleString('en-GB', {year: 'numeric', month: 'long', day: 'numeric'}).replace(/(11|12|13) /, '$1th ').replace('1 ', '1st ').replace('2 ', '2nd ').replace('3 ', '3rd ').replace(/([0-9]) /, '$1th ');
+              info += '. After release, you\'ll find your paper on ' + (this.config.repo_name ? this.config.repo_name : 'ScholarWorks') + ', Google Scholar, Web of Science.</p>';
               info += '<h3>Your paper will be freely available at this link:</h3>';
             } else {
-              info = '<p>You\'ll soon find your paper freely available in ' + ((ref13 = this.config.repo_name) != null ? ref13 : 'ScholarWorks') + ', Google Scholar, Web of Science, and other popular tools.';
+              info = '<p>You\'ll soon find your paper freely available in ' + (this.config.repo_name ? this.config.repo_name : 'ScholarWorks') + ', Google Scholar, Web of Science, and other popular tools.';
               info += '<h3>Your paper is now freely available at this link:</h3>';
             }
             _OA.html('#_oab_zenodo_embargo', info);
@@ -920,13 +952,16 @@ _oab.prototype.deposit = function(e) { // only used by shareyourpaper
         return this.ping('shareyourpaper_couldnt_submit_deposit');
       });
     }
-  } catch (error1) {
+  } catch (err) {
     return this.ping('shareyourpaper_try_deposit_catch');
   }
 };
 
-_oab.prototype.permissions = function(data) { // only used by shareyourpaper
-  var nj, p, paper, ph, pm, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref18, ref19, ref2, ref20, ref21, ref22, ref23, ref24, ref25, ref26, ref27, ref28, ref29, ref3, ref30, ref31, ref32, ref33, ref34, ref35, ref36, ref37, ref38, ref39, ref4, ref40, ref41, ref42, ref43, ref44, ref45, ref46, ref47, ref48, ref49, ref5, ref50, ref51, ref52, ref53, ref54, ref55, ref56, ref6, ref7, ref8, ref9, refs, rm, tcs;
+_oab.prototype.permissions = function(data) { 
+  // only used by shareyourpaper
+  // requests the permissions for a particular article identified by DOI from the API
+  // then shows suitable next steps on screen
+  var nj, p, paper, ph, pm, refs, rm, tcs;
   try {
     if (data != null) {
       this.f = data;
@@ -937,11 +972,15 @@ _oab.prototype.permissions = function(data) { // only used by shareyourpaper
       }), 100);
     } else {
       this.loading(false);
-      if (((ref = this.f) != null ? ref.doi_not_in_crossref : void 0) && ((ref1 = this.f) != null ? ref1.doi_not_in_oadoi : void 0)) {
+      if (this.f === undefined) this.f = {};
+      if (this.f.metadata === undefined) this.f.metadata = {};
+      if (this.f.permissions === undefined) this.f.permissions = {};
+      if (this.f.permissions.best_permission === undefined) this.f.permissions.best_permission = {};
+      if (this.f.doi_not_in_crossref || this.f.doi_not_in_oadoi) {
         this.f = {};
         _OA.show('#_oab_error', '<p>Double check your DOI, that doesn\'t look right to us.</p>');
         return _OA.gebi('_oab_input').focus();
-      } else if (((((ref2 = this.f) != null ? (ref3 = ref2.metadata) != null ? ref3.crossref_type : void 0 : void 0) != null) && ((ref4 = this.f.metadata.crossref_type) !== 'journal-article' && ref4 !== 'proceedings-article')) || ((((ref5 = this.f) != null ? (ref6 = ref5.metadata) != null ? ref6.type : void 0 : void 0) != null) && ((ref7 = this.f.metadata.type) !== 'journal-article' && ref7 !== 'proceedings-article'))) {
+      } else if ((this.f.metadata.crossref_type !== undefined && this.f.metadata.crossref_type !== 'journal-article' && this.f.metadata.crossref_type !== 'proceedings-article') || (this.f.metadata.type !== undefined && this.f.metadata.type !== 'journal-article' && this.f.metadata.type !== 'proceedings-article')) {
         _OA.gebi('_oab_input').focus();
         nj = '<p>Sorry, right now this only works with academic journal articles.';
         if (this.cml()) {
@@ -950,7 +989,7 @@ _oab.prototype.permissions = function(data) { // only used by shareyourpaper
           nj += "?subject=Help%20depositing%20&body=Hi%2C%0D%0A%0D%0AI'd%20like%20to%20deposit%3A%0D%0A%0D%0A%3C%3CPlease%20insert%20a%20full%20citation%3E%3E%0D%0A%0D%0ACan%20you%20please%20assist%20me%3F%0D%0A%0D%0AYours%20sincerely%2C" + '">click here</a>';
         }
         return this.restart(void 0, void 0, nj + '.</p>');
-      } else if (((ref8 = this.f) != null ? (ref9 = ref8.metadata) != null ? ref9.title : void 0 : void 0) == null) {
+      } else if (!this.f.metadata.title) {
         _OA.show('#_oab_error', '<h3>Unknown paper</h3><p>Sorry, we cannot find this paper or sufficient metadata. ' + this.contact() + '</p>');
         return this.ping('shareyourpaper_unknown_article');
       } else {
@@ -990,13 +1029,15 @@ _oab.prototype.permissions = function(data) { // only used by shareyourpaper
           _OA.html('._oab_terms', tcs);
         }
         refs = '';
-        for (p in (ref10 = (ref11 = this.f) != null ? (ref12 = ref11.permissions) != null ? (ref13 = ref12.best_permission) != null ? (ref14 = ref13.provenance) != null ? ref14.archiving_policy : void 0 : void 0 : void 0 : void 0) != null ? ref10 : []) {
-          refs += ' <a id="_oab_policy_text" target="_blank" href="' + this.f.permissions.best_permission.provenance.archiving_policy[p] + '">[' + (parseInt(p) + 1) + ']</a>';
-        }
+        try {
+          for (p in this.f.permissions.best_permission.provenance.archiving_policy) {
+            refs += ' <a id="_oab_policy_text" target="_blank" href="' + this.f.permissions.best_permission.provenance.archiving_policy[p] + '">[' + (parseInt(p) + 1) + ']</a>';
+          }
+        } catch(err) {}
         _OA.html('._oab_refs', refs);
-        paper = ((ref15 = this.f) != null ? (ref16 = ref15.metadata) != null ? ref16.doi : void 0 : void 0) ? '<a id="_oab_your_paper" target="_blank" href="https://doi.org/' + this.f.metadata.doi + '"><u>your paper</u></a>' : 'your paper';
-        _OA.html('._oab_your_paper', (((ref17 = this.f) != null ? (ref18 = ref17.permissions) != null ? (ref19 = ref18.best_permission) != null ? ref19.version : void 0 : void 0 : void 0) === 'publishedVersion' ? 'the publisher pdf of ' : '') + paper);
-        _OA.html('._oab_journal', (ref20 = (ref21 = this.f) != null ? (ref22 = ref21.metadata) != null ? ref22.journal_short : void 0 : void 0) != null ? ref20 : 'the journal');
+        paper = this.f.metadata.doi ? '<a id="_oab_your_paper" target="_blank" href="https://doi.org/' + this.f.metadata.doi + '"><u>your paper</u></a>' : 'your paper';
+        _OA.html('._oab_your_paper', (this.f.permissions.best_permission.version === 'publishedVersion' ? 'the publisher pdf of ' : '') + paper);
+        _OA.html('._oab_journal', (this.f.metadata.shortname ? this.f.metadata.shortname : 'the journal'));
         if (this.f.url) {
           // it is already OA, depending on settings can deposit another copy
           _OA.set('._oab_oa_url', 'href', this.f.url);
@@ -1007,27 +1048,27 @@ _oab.prototype.permissions = function(data) { // only used by shareyourpaper
             this.file = true; // no file required for oa deposit...
             return _OA.show('._oab_oa_deposit');
           }
-        } else if ((ref23 = this.f) != null ? (ref24 = ref23.permissions) != null ? (ref25 = ref24.best_permission) != null ? ref25.can_archive : void 0 : void 0 : void 0) {
-          if (((ref26 = this.f) != null ? (ref27 = ref26.permissions) != null ? (ref28 = ref27.best_permission) != null ? ref28.version : void 0 : void 0 : void 0) === 'publishedVersion') {
+        } else if (this.f.permissions.best_permission.can_archive) {
+          if (this.f.permissions.best_permission.version === 'publishedVersion') {
             // can be shared, depending on permissions info
             _OA.hide('#_oab_not_pdf');
           }
-          if (typeof ((ref29 = this.f) != null ? (ref30 = ref29.permissions) != null ? (ref31 = ref30.best_permission) != null ? ref31.licence : void 0 : void 0 : void 0) === 'string' && this.f.permissions.best_permission.licence.startsWith('other-')) {
+          if (typeof this.f.permissions.best_permission.licence === 'string' && this.f.permissions.best_permission.licence.startsWith('other-')) {
             _OA.html('._oab_licence', 'under the publisher\'s terms' + refs);
           } else {
-            _OA.html('._oab_licence', (ref32 = (ref33 = this.f) != null ? (ref34 = ref33.permissions) != null ? (ref35 = ref34.best_permission) != null ? ref35.licence : void 0 : void 0 : void 0) != null ? ref32 : 'CC-BY');
+            _OA.html('._oab_licence', (this.f.permissions.best_permission.licence ? this.f.permissions.best_permission.licence : 'CC-BY'));
           }
           return _OA.show('._oab_archivable');
         } else if (this.config.dark_deposit_off) {
           // permission must be requested first
-          rm = 'mailto:' + ((ref36 = (ref37 = (ref38 = this.f.permissions) != null ? (ref39 = ref38.best_permission) != null ? ref39.permissions_contact : void 0 : void 0) != null ? ref37 : this.config.deposit_help) != null ? ref36 : this.cml()) + '?';
-          if ((ref40 = this.f.permissions) != null ? (ref41 = ref40.best_permission) != null ? ref41.permissions_contact : void 0 : void 0) {
-            rm += 'cc=' + ((ref42 = this.config.deposit_help) != null ? ref42 : this.cml()) + '&';
+          rm = 'mailto:' + (this.f.permissions.best_permission.permissions_contact ? this.f.permissions.best_permission.permissions_contact : (this.config.deposit_help ? this.config.deposit_help : this.cml())) + '?';
+          if (this.f.permissions.best_permission.permissions_contact) {
+            rm += 'cc=' + (this.config.deposit_help ? this.config.deposit_help : this.cml()) + '&';
           }
-          rm += 'subject=Request%20to%20self%20archive%20' + ((ref43 = (ref44 = this.f.metadata) != null ? ref44.doi : void 0) != null ? ref43 : '') + '&body=';
+          rm += 'subject=Request%20to%20self%20archive%20' + (this.f.metadata.doi ? this.f.metadata.doi : '') + '&body=';
           rm += encodeURIComponent('To whom it may concern,\n\n');
-          rm += encodeURIComponent('I am writing to request permission to deposit the full text of my paper "' + ((ref45 = (ref46 = (ref47 = this.f.metadata) != null ? ref47.title : void 0) != null ? ref46 : (ref48 = this.f.metadata) != null ? ref48.doi : void 0) != null ? ref45 : 'Untitled paper') + '" ');
-          if ((ref49 = this.f.metadata) != null ? ref49.journal : void 0) {
+          rm += encodeURIComponent('I am writing to request permission to deposit the full text of my paper "' + (this.f.metadata.title ? this.f.metadata.title : (this.f.metadata.doi ? this.f.metadata.doi : 'Untitled paper')) + '" ');
+          if (this.f.metadata.journal) {
             rm += encodeURIComponent('published in "' + this.f.metadata.journal + '"');
           }
           rm += encodeURIComponent('\n\nI would like to archive the final pdf. If that is not possible, I would like to archive the accepted manuscript. Ideally, I would like to do so immediately but will respect a reasonable embargo if requested.\n\n');
@@ -1037,9 +1078,9 @@ _oab.prototype.permissions = function(data) { // only used by shareyourpaper
           rm += encodeURIComponent('Thank you for your attention and I look forward to hearing from you.');
           _OA.set('#_oab_reviewemail', 'href', rm);
           // or to confirm permission has been received
-          pm = 'mailto:' + ((ref50 = this.config.deposit_help) != null ? ref50 : this.cml()) + '?subject=Permission%20Given%20to%20Deposit%20' + ((ref51 = (ref52 = this.f.metadata) != null ? ref52.doi : void 0) != null ? ref51 : '') + '&body=';
+          pm = 'mailto:' + (this.config.deposit_help ? this.config.deposit_help : this.cml()) + '?subject=Permission%20Given%20to%20Deposit%20' + (this.f.metadata.doi ? this.f.metadata.doi : '') + '&body=';
           pm += encodeURIComponent('To whom it may concern,\n\nAttached is written confirmation of permission I\'ve been given to deposit, and the permitted version of my paper: ');
-          pm += encodeURIComponent('"' + ((ref53 = (ref54 = (ref55 = this.f.metadata) != null ? ref55.title : void 0) != null ? ref54 : (ref56 = this.f.metadata) != null ? ref56.doi : void 0) != null ? ref53 : 'Untitled paper') + '" \n\nCan you please deposit it into the repository on my behalf? \n\nSincerely, ');
+          pm += encodeURIComponent('"' + (this.f.metadata.title ? this.f.metadata.title : (this.f.metadata.doi ? this.f.metadata.doi : 'Untitled paper')) + '" \n\nCan you please deposit it into the repository on my behalf? \n\nSincerely, ');
           _OA.set('#_oab_permissionemail', 'href', pm);
           _OA.hide('._oab_get_email');
           return _OA.show('._oab_permission_required');
@@ -1051,24 +1092,25 @@ _oab.prototype.permissions = function(data) { // only used by shareyourpaper
         }
       }
     }
-  } catch (error1) {
+  } catch (err) {
     return this.ping('shareyourpaper_try_permissions_catch');
   }
 };
 
 _oab.prototype.findings = function(data) { // only used by instantill
-  var citation, ct, err, hasoa, hassub, ou, ref, ref1, ref10, ref11, ref12, ref13, ref14, ref15, ref16, ref17, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9;
+  var citation, ct, err, hasoa, hassub, ou;
   try {
     if (data != null) {
       this.f = data;
     }
+    if (this.f.metadata === undefined) this.f.metadata = {};
     if (!_OA.gebi(this.element)) {
       return setTimeout((() => {
         return this.findings();
       }), 100);
     } else {
       this.loading(false);
-      if (ct = (ref = (ref1 = this.f.metadata) != null ? ref1.crossref_type : void 0) != null ? ref : (ref2 = this.f.metadata) != null ? ref2.type : void 0) {
+      if (ct = (this.f.metadata.crossref_type ? this.f.metadata.crossref_type : (this.f.metadata.type ? this.f.metadata.type : undefined))) {
         if (ct !== 'journal-article' && ct !== 'proceedings-article' && ct !== 'posted-content') {
           if (ct === 'book-section' || ct === 'book-part' || ct === 'book-chapter') {
             err = '<p>Please make your request through our ' + (this.config.book ? '<a id="_oab_book_form" href="' + this.config.book + '">book form</a>' : 'book form');
@@ -1092,14 +1134,16 @@ _oab.prototype.findings = function(data) { // only used by instantill
           embedded: window.location.href
         };
         data.config = this.config;
-        data.metadata = (ref3 = this.f.metadata) != null ? ref3 : {};
+        data.metadata = this.f.metadata;
         if (this.config.pilot) {
           data.pilot = this.config.pilot;
         }
         if (this.config.live) {
           data.live = this.config.live;
         }
-        if ((ref4 = this.f.ill) != null ? (ref5 = ref4.subscription) != null ? ref5.url : void 0 : void 0) {
+        if (this.f.ill === undefined) this.f.ill = {};
+        if (this.f.ill.subscription === undefined) this.f.ill.subscription = {};
+        if (this.f.ill.subscription.url) {
           data.resolved = 'subscription';
         } else if (this.f.url) {
           data.resolved = 'open';
@@ -1107,26 +1151,24 @@ _oab.prototype.findings = function(data) { // only used by instantill
           data.resolved = 'library';
         }
         if (data.resolved != null) {
-          data.url = (ref6 = (ref7 = (ref8 = this.f.ill) != null ? (ref9 = ref8.subscription) != null ? ref9.url : void 0 : void 0) != null ? ref7 : this.f.url) != null ? ref6 : ou;
+          data.url = (this.f.ill.subscription.url ? this.f.ill.subscription.url : (this.f.url ? this.f.url : ou));
           _OA.jx(this.api + '/ill', data, (() => {
-            var ref10, ref11, ref12, ref13;
-            return window.location = (ref10 = (ref11 = (ref12 = this.f.ill) != null ? (ref13 = ref12.subscription) != null ? ref13.url : void 0 : void 0) != null ? ref11 : this.f.url) != null ? ref10 : ou;
+            return window.location = (this.f.ill.subscription.url ? this.f.ill.subscription.url : (this.f.url ? this.f.url : ou));
           }), (() => {
-            var ref10, ref11, ref12, ref13;
-            return window.location = (ref10 = (ref11 = (ref12 = this.f.ill) != null ? (ref13 = ref12.subscription) != null ? ref13.url : void 0 : void 0) != null ? ref11 : this.f.url) != null ? ref10 : ou;
+            return window.location = (this.f.ill.subscription.url ? this.f.ill.subscription.url : (this.f.url ? this.f.url : ou));
           }));
         }
       }
       _OA.show('#_oab_findings');
-      if ((ref10 = this.f.ill) != null ? ref10.error : void 0) {
+      if (this.f.ill.error !== undefined) {
         _OA.show('#_oab_error', '<p>Please note, we encountered errors querying the following subscription services: ' + this.f.ill.error.join(', ') + '</p>');
       }
-      if ((((ref11 = this.f.metadata) != null ? ref11.title : void 0) != null) && ((this.f.metadata.journal != null) || this.data.usermetadata)) {
+      if (this.f.metadata.title && (this.f.metadata.journal || this.data.usermetadata)) {
         citation = '<h2>' + this.f.metadata.title + '</h2>';
         if (this.f.metadata.year || this.f.metadata.journal || this.f.metadata.volume || this.f.metadata.issue) {
           citation += '<p><i>';
           if (this.f.metadata.year) {
-            citation += ((ref12 = this.f.metadata.year) != null ? ref12 : '') + (this.f.metadata.journal || this.f.metadata.volume || this.f.metadata.issue ? ', ' : '');
+            citation += this.f.metadata.year + (this.f.metadata.journal || this.f.metadata.volume || this.f.metadata.issue ? ', ' : '');
           }
           if (this.f.metadata.journal) {
             citation += this.f.metadata.journal;
@@ -1143,7 +1185,7 @@ _oab.prototype.findings = function(data) { // only used by instantill
         _OA.html('#_oab_citation', citation);
         hassub = false;
         hasoa = false;
-        if (((ref13 = this.f.ill) != null ? (ref14 = ref13.subscription) != null ? ref14.journal : void 0 : void 0) || ((ref15 = this.f.ill) != null ? (ref16 = ref15.subscription) != null ? ref16.url : void 0 : void 0)) {
+        if (this.f.ill.subscription.journal || this.f.ill.subscription.url) {
           hassub = true;
           if (this.f.ill.subscription.url != null) {
             // if sub url show the url link, else show the "should be able to access on pub site
@@ -1156,7 +1198,7 @@ _oab.prototype.findings = function(data) { // only used by instantill
           _OA.show('#_oab_oa_available');
         }
         if ((this.f.ill != null) && !((this.config.ill_if_sub_off && hassub) || (this.config.ill_if_oa_off && hasoa))) {
-          _OA.html('#_oab_cost_time', '<p>It ' + (this.config.cost ? 'costs ' + this.config.cost : 'is free to you,') + ' and we\'ll usually email the link within ' + ((ref17 = this.config.time) != null ? ref17 : '24 hours') + '.<br></p>');
+          _OA.html('#_oab_cost_time', '<p>It ' + (this.config.cost ? 'costs ' + this.config.cost : 'is free to you,') + ' and we\'ll usually email the link within ' + (this.config.time ? this.config.time : '24 hours') + '.<br></p>');
           if (!this.data.email) {
             if (this.openurl()) {
               _OA.hide('#_oab_collect_email');
@@ -1181,21 +1223,21 @@ _oab.prototype.findings = function(data) { // only used by instantill
         return this.metadata();
       }
     }
-  } catch (error1) {
+  } catch (err) {
     return this.ping('instantill_try_findings_catch');
   }
 };
 
 _oab.prototype.find = function(e) {
-  var base, base1, base2, base3, base4, base5, base6, data, i, k, len, ref, ref1, ref2, ref3, ref4, ref5, ref6, v, val;
+  var data, keys, i, k, len, v, val;
   try {
     try {
       e.preventDefault();
-    } catch (error1) {}
+    } catch (err) {}
     if (JSON.stringify(this.f) !== '{}' || this.needmore) {
-      ref = ['title', 'journal', 'year', 'doi'];
-      for (i = 0, len = ref.length; i < len; i++) {
-        k = ref[i];
+      keys = ['title', 'journal', 'year', 'doi'];
+      for (i = 0, len = keys.length; i < len; i++) {
+        k = keys[i];
         if (v = _OA.get('#_oab_' + k)) {
           if (this.data[k] !== v) {
             this.data[k] = v;
@@ -1217,15 +1259,11 @@ _oab.prototype.find = function(e) {
         return;
       }
     }
-    if (this.data.atitle) {
-      if ((base = this.data).title == null) {
-        base.title = this.data.atitle;
-      }
+    if (this.data.atitle && !this.data.title) {
+      this.data.title = this.data.atitle;
     }
-    if (this.data.rft_id) {
-      if ((base1 = this.data).doi == null) {
-        base1.doi = this.data.rft_id;
-      }
+    if (this.data.rft_id && !this.data.doi) {
+      this.data.doi = this.data.rft_id;
     }
     if (this.data.doi && this.data.doi.includes('10.') && this.data.doi.startsWith('http')) {
       this.data.url = this.data.doi;
@@ -1252,9 +1290,9 @@ _oab.prototype.find = function(e) {
         }
       }
     } else if (this.data.doi || this.data.title || this.data.url || this.data.id) {
-      _OA.set('#_oab_input', (ref1 = (ref2 = (ref3 = this.data.doi) != null ? ref3 : this.data.title) != null ? ref2 : this.data.url) != null ? ref1 : this.data.id);
+      _OA.set('#_oab_input', (this.data.doi ? this.data.doi : (this.data.title ? this.data.title : (this.data.url ? this.data.url : this.data.id))));
     }
-    if (this.plugin === 'instantill' && !this.data.doi && !this.needmore && !((ref4 = this.f) != null ? (ref5 = ref4.metadata) != null ? ref5.journal : void 0 : void 0) && (!this.data.title || (this.data.title.length < 30 && this.data.title.split(' ').length < 3))) {
+    if (this.plugin === 'instantill' && !this.data.doi && !this.needmore && (this.f === undefined || this.f.metadata === undefined || !this.f.metadata.journal) && (!this.data.title || (this.data.title.length < 30 && this.data.title.split(' ').length < 3))) {
       this.needmore = true;
       return this.metadata(); // need more metadata for short titles
     } else if (!this.data.doi && (this.plugin === 'shareyourpaper' || (!this.data.url && !this.data.pmid && !this.data.pmcid && !this.data.title && !this.data.id))) {
@@ -1275,24 +1313,20 @@ _oab.prototype.find = function(e) {
       this.state();
       this.loading();
       this.data.config = this.config;
-      if ((base2 = this.data).from == null) {
-        base2.from = this.uid;
+      if (!this.data.from) {
+        this.data.from = this.uid;
       }
-      if ((base3 = this.data).plugin == null) {
-        base3.plugin = this.plugin;
+      if (!this.data.plugin) {
+        this.data.plugin = this.plugin;
       }
-      if ((base4 = this.data).embedded == null) {
-        base4.embedded = window.location.href;
+      if (!this.data.embedded) {
+        this.data.embedded = window.location.href;
       }
-      if (this.config.pilot) {
-        if ((base5 = this.data).pilot == null) {
-          base5.pilot = this.config.pilot;
-        }
+      if (this.config.pilot && this.data.pilot === undefined) {
+        this.data.pilot = this.config.pilot;
       }
-      if (this.config.live) {
-        if ((base6 = this.data).live == null) {
-          base6.live = this.config.live;
-        }
+      if (this.config.live && this.data.live === undefined) {
+        this.data.live = this.config.live;
       }
       if (this.demo === true && (this.data.title === 'Engineering a Powerfully Simple Interlibrary Loan Experience with InstantILL' || this.data.doi === '10.1234/567890' || ((this.data.doi != null) && this.data.doi.startsWith('10.1234/oab-syp')))) {
         data = {
@@ -1300,7 +1334,7 @@ _oab.prototype.find = function(e) {
             title: 'Engineering a Powerfully Simple Interlibrary Loan Experience with InstantILL',
             year: '2019',
             crossref_type: 'journal-article',
-            doi: (ref6 = this.data.doi) != null ? ref6 : '10.1234/oab-syp-aam'
+            doi: (this.data.doi ? this.data.doi : '10.1234/oab-syp-aam')
           }
         };
         data.metadata.journal = 'Proceedings of the 16th IFLA ILDS conference: Beyond the paywall - Resource sharing in a disruptive ecosystem';
@@ -1364,26 +1398,191 @@ _oab.prototype.find = function(e) {
         });
       }
     }
-  } catch (error1) {
+  } catch (err) {
     return this.ping(this.plugin + '_try_find_catch');
   }
 };
 
-_oab.css = '<style> ._oab_form { display: inline-block; width: 100%; height: 34px; padding: 6px 12px; font-size: 1em; line-height: 1.428571429; color: #555555; vertical-align: middle; background-color: #ffffff; background-image: none; border: 1px solid #cccccc; border-radius: 4px; -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; } ._oab_button { display: table-cell; height:34px; padding: 6px 3px; margin-bottom: 0; font-size: 1em; font-weight: normal; line-height: 1.428571429; text-decoration: none; text-align: center; white-space: nowrap; vertical-align: middle; cursor: pointer; background-image: none; border: 1px solid transparent; border-radius: 4px; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; user-select: none; color: #ffffff; background-color: #428bca; border-color: #357ebd; } </style>';
+// the default css, optionally overridden at instantiation.
+_oab.css = '<style>\
+._oab_form { display: inline-block; width: 100%; height: 34px; padding: 6px 12px; font-size: 1em; line-height: 1.428571429; color: #555555; vertical-align: middle; background-color: #ffffff; background-image: none; border: 1px solid #cccccc; border-radius: 4px; -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; } \
+._oab_button { display: table-cell; height:34px; padding: 6px 3px; margin-bottom: 0; font-size: 1em; font-weight: normal; line-height: 1.428571429; text-decoration: none; text-align: center; white-space: nowrap; vertical-align: middle; cursor: pointer; background-image: none; border: 1px solid transparent; border-radius: 4px; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; user-select: none; color: #ffffff; background-color: #428bca; border-color: #357ebd; } \
+</style>';
 
-_oab.instantill_template = '<div class="_oab_panel" id="_oab_inputs"> <p id="_oab_intro"> If you need <span class="_oab_paper">an article</span> you can request it from any library in the world through Interlibrary loan. <br>Start by entering a full <span class="_oab_paper">article</span> title, citation, or DOI:<br> </p> <p><input class="_oab_form" type="text" id="_oab_input" placeholder="e.g. World Scientists Warning of a Climate Emergency" aria-label="Enter a search term" style="box-shadow:none;"></input></p> <p><a class="_oab_find btn-iu _oab_button _oab_loading" id="_oab_find" href="#" aria-label="Search" style="min-width:140px;">Find <span class="_oab_paper">article</span></a></p> <div id="_oab_book_or_other"></div> <div id="_oab_advanced_account_info"></div> </div> <div class="_oab_panel" id="_oab_findings" style="display:none;"> <div id="_oab_citation"><h2>A title</h2><p><b>And citation string, OR demo title OR Unknown <span class="_oab_paper">article</span> and refer to library</b></p></div> <p id="_oab_wrong_paper"><a class="_oab_wrong" href="#"><b>This is not the <span class="_oab_paper">article</span> I searched</b></a></p> <div class="_oab_section" id="_oab_sub_available"> <h3>We have an online copy instantly available</h3> <p>You should be able to access it on the publisher\'s website.</p> <p><a target="_blank" id="_oab_sub_url" href="#"><b>Open <span class="_oab_paper">article</span> in a new tab</b></a></p> </div> <div class="_oab_section" id="_oab_oa_available"> <h3><br>There is a free, instantly accessible copy online</h3> <p>It may not be the final published version and may lack graphs or figures making it unsuitable for citations.</p> <p><a id="_oab_url" target="_blank" href="#"><b>Open <span class="_oab_paper">article</span> in a new tab</b></a></p> </div> <div class="_oab_section" id="_oab_ask_library"> <h3><br>Ask the library to send you a digital copy via Interlibrary Loan</h3> <div id="_oab_cost_time"><p>It is free to you, and we\'ll usually email the link within 24 hours.<br></p></div> <div id="_oab_collect_email"> <p id="_oab_terms_note"><input type="checkbox" id="_oab_read_terms"> I have read the <a id="_oab_terms_link" target="_blank" href="#">terms and conditions</a></p> <p><input placeholder="Your university email address" id="_oab_email" type="text" class="_oab_form"></p> </div> <p><a class="_oab_submit btn-iu _oab_button _oab_loading" href="#" id="_oab_submit" style="min-width:140px;">Complete request</a></p> <p><a href="#" class="_oab_restart" id="_oab_try_another"><b>Try another</b></a></p> </div> </div> <div class="_oab_panel" id="_oab_metadata" style="display:none;"> <h2>Sorry we didn\'t find that!</h2> <p id="_oab_doi_not_in_crossref" style="display:none;">The DOI <span id="_oab_bad_doi">you entered</span> does not appear in Crossref</p> <p>Please provide or amend the <span class="_oab_paper">article</span> details.</p> <p><span class="_oab_paper">Article</span> title (required)<br><input class="_oab_form" id="_oab_title" type="text" placeholder="e.g The State of OA: A large-scale analysis of Open Access"></p> <p>Journal title (required)<br><input class="_oab_form" id="_oab_journal" type="text" placeholder="e.g. Nature"></p> <p>Year of publication (required)<br><input class="_oab_form" id="_oab_year" type="text" placeholder="e.g 1992"></p> <p><span class="_oab_paper">Article</span> DOI or URL<br><input class="_oab_form" id="_oab_doi" type="text" placeholder="e.g 10.1126/scitranslmed.3008973"></p> <p><a href="#" class="_oab_find btn-iu _oab_button _oab_loading _oab_continue" id="_oab_continue" style="min-width:140px;">Continue</a></p> <p> <a href="#" class="_oab_restart" id="_oab_try_again"><b>Try another</b></a> <span id="_oab_advanced_ill_form" style="display:none;"></span> </p> </div> <div class="_oab_panel" id="_oab_done" style="display:none;"> <div id="_oab_done_header"> <h2>Thanks! Your request has been received.</h2> <p>And confirmation code and tell we will email soon - OR sorry we could not create an ILL, and refer back to library if possible.</p> </div> <p><a href="#" class="_oab_restart btn-iu _oab_button" id="_oab_done_restart" id="_oab_restart" style="min-width:140px;">Do another</a></p> </div> <div id="_oab_error"></div> <div id="_oab_pilot"></div>';
+_oab.instantill_template = '<div class="_oab_panel" id="_oab_inputs"> \
+  <p id="_oab_intro"> If you need <span class="_oab_paper">an article</span> you can request it from any library in the world through Interlibrary loan. \
+  <br>Start by entering a full <span class="_oab_paper">article</span> title, citation, or DOI:<br></p> \
+  <p><input class="_oab_form" type="text" id="_oab_input" placeholder="e.g. World Scientists Warning of a Climate Emergency" aria-label="Enter a search term" style="box-shadow:none;"></input></p> \
+  <p><a class="_oab_find btn-iu _oab_button _oab_loading" id="_oab_find" href="#" aria-label="Search" style="min-width:140px;">Find <span class="_oab_paper">article</span></a></p> \
+  <div id="_oab_book_or_other"></div> \
+  <div id="_oab_advanced_account_info"></div> \
+</div> \
+<div class="_oab_panel" id="_oab_findings" style="display:none;"> <\
+  div id="_oab_citation"> \
+    <h2>A title</h2> \
+    <p><b>And citation string, OR demo title OR Unknown <span class="_oab_paper">article</span> and refer to library</b></p> \
+  </div> \
+  <p id="_oab_wrong_paper"><a class="_oab_wrong" href="#"><b>This is not the <span class="_oab_paper">article</span> I searched</b></a></p> \
+  <div class="_oab_section" id="_oab_sub_available"> \
+    <h3>We have an online copy instantly available</h3> \
+    <p>You should be able to access it on the publisher\'s website.</p> <p><a target="_blank" id="_oab_sub_url" href="#"><b>Open <span class="_oab_paper">article</span> in a new tab</b></a></p> \
+  </div> \
+  <div class="_oab_section" id="_oab_oa_available"> \
+    <h3><br>There is a free, instantly accessible copy online</h3> \
+    <p>It may not be the final published version and may lack graphs or figures making it unsuitable for citations.</p> \
+    <p><a id="_oab_url" target="_blank" href="#"><b>Open <span class="_oab_paper">article</span> in a new tab</b></a></p> \
+  </div> \
+  <div class="_oab_section" id="_oab_ask_library"> \
+    <h3><br>Ask the library to send you a digital copy via Interlibrary Loan</h3> \
+    <div id="_oab_cost_time"><p>It is free to you, and we\'ll usually email the link within 24 hours.<br></p></div> \
+    <div id="_oab_collect_email"> \
+      <p id="_oab_terms_note"><input type="checkbox" id="_oab_read_terms"> I have read the <a id="_oab_terms_link" target="_blank" href="#">terms and conditions</a></p> \
+      <p><input placeholder="Your university email address" id="_oab_email" type="text" class="_oab_form"></p> \
+    </div> \
+    <p><a class="_oab_submit btn-iu _oab_button _oab_loading" href="#" id="_oab_submit" style="min-width:140px;">Complete request</a></p> \
+    <p><a href="#" class="_oab_restart" id="_oab_try_another"><b>Try another</b></a></p> \
+  </div> \
+</div> \
+<div class="_oab_panel" id="_oab_metadata" style="display:none;"> \
+  <h2>Sorry we didn\'t find that!</h2> \
+  <p id="_oab_doi_not_in_crossref" style="display:none;">The DOI <span id="_oab_bad_doi">you entered</span> does not appear in Crossref</p> \
+  <p>Please provide or amend the <span class="_oab_paper">article</span> details.</p> \
+  <p><span class="_oab_paper">Article</span> title (required)<br><input class="_oab_form" id="_oab_title" type="text" placeholder="e.g The State of OA: A large-scale analysis of Open Access"></p> \
+  <p>Journal title (required)<br><input class="_oab_form" id="_oab_journal" type="text" placeholder="e.g. Nature"></p> \
+  <p>Year of publication (required)<br><input class="_oab_form" id="_oab_year" type="text" placeholder="e.g 1992"></p> \
+  <p><span class="_oab_paper">Article</span> DOI or URL<br><input class="_oab_form" id="_oab_doi" type="text" placeholder="e.g 10.1126/scitranslmed.3008973"></p> \
+  <p><a href="#" class="_oab_find btn-iu _oab_button _oab_loading _oab_continue" id="_oab_continue" style="min-width:140px;">Continue</a></p> \
+  <p> <a href="#" class="_oab_restart" id="_oab_try_again"><b>Try another</b></a> <span id="_oab_advanced_ill_form" style="display:none;"></span> </p> \
+</div> \
+<div class="_oab_panel" id="_oab_done" style="display:none;"> <\
+  div id="_oab_done_header"> \
+    <h2>Thanks! Your request has been received.</h2> \
+    <p>And confirmation code and tell we will email soon - OR sorry we could not create an ILL, and refer back to library if possible.</p> \
+  </div> \
+  <p><a href="#" class="_oab_restart btn-iu _oab_button" id="_oab_done_restart" id="_oab_restart" style="min-width:140px;">Do another</a></p> \
+</div> \
+<div id="_oab_error"></div> \
+<div id="_oab_pilot"></div>';
 
-_oab.shareyourpaper_template = '<div class="_oab_panel" id="_oab_inputs"> <h2>Make your research visible and see 30% more citations</h2> <p><span id="_oab_lib_info">We can help you make your paper Open Access, for free, wherever you publish. It\'s legal and takes just minutes.</span> Join millions of researchers sharing their papers freely with colleagues and the public.</p> <h3>Start by entering the DOI of your paper</h3> <p>We\'ll gather information about your paper and find the easiest way to share it.</p> <p><input class="_oab_form" type="text" id="_oab_input" placeholder="e.g. 10.1126/scitranslmed.abc2344" aria-label="Enter a search term" style="box-shadow:none;"></input></p> <p><a class="_oab_find btn-iu _oab_button _oab_loading" href="#" id="_oab_find" aria-label="Search" style="min-width:140px;">Next</a></p> <p><a id="_oab_nodoi" href="mailto:help@openaccessbutton.org?subject=Help%20depositing%20my%20paper&body=Hi%2C%0D%0A%0D%0AI\'d%20like%20to%20deposit%3A%0D%0A%0D%0A%3C%3CPlease%20insert%20a%20full%20citation%3E%3E%0D%0A%0D%0ACan%20you%20please%20assist%20me%3F%0D%0A%0D%0AYours%20sincerely%2C"><b>My paper doesn\'t have a DOI</b></a></p> </div> <div class="_oab_panel" id="_oab_permissions" style="display:none;"> <div class="_oab_section _oab_oa" id="_oab_oa"> <h2>Your paper is already freely available!</h2> <p>Great news, you\'re already getting the benefits of sharing your work! Your publisher or co-author have already shared it.</p> <p><a target="_blank" href="#" class="_oab_oa_url btn-iu _oab_button" style="min-width:140px;">See free version</a></p> <p><a href="#" class="_oab_restart" id="_oab_restart"><b>Do another</b></a></p> </div> <div class="_oab_section _oab_permission_required" id="_oab_permission_required"> <h2>You may share your paper if you ask the journal</h2> <p>Unlike most, <span class="_oab_journal">the journal</span> requires that you ask them before you share your paper freely. Asking only takes a moment as we find out who to contact and have drafted an email for you.</p> <p><a target="_blank" id="_oab_reviewemail" href="#" class="btn-iu _oab_button" style="min-width:140px;">Review Email</a></p> <p><a target="_blank" id="_oab_permissionemail" class="_oab_restart" href="#"><b>I\'ve got permission now!</b></a></p> </div> <div class="_oab_section _oab_oa_deposit" id="_oab_oa_deposit"> <h2>Your paper is already freely available!</h2> <p>Great news, you\'re already getting the benefits of sharing your work! Your publisher or co-author have already shared a <a class="_oab_oa_url" id="_oab_goto_oa_url" target="_blank" href="#">freely available copy</a>.</p> <h3 class="_oab_section _oab_get_email">Please enter your email to confirm deposit</h3> </div> <div class="_oab_section _oab_archivable" id="_oab_archivable"> <h2>You can freely share your paper!</h2> <p><span class="_oab_library">The library has</span> checked and <span class="_oab_journal">the journal</span> encourages you to freely share <span class="_oab_your_paper">your paper</span> so colleagues and the public can freely read and cite it. <span class="_oab_refs"></span></p> <div id="_oab_not_pdf"> <h3><span>&#10003;</span> Find the manuscript the journal accepted. It\'s not a PDF from the journal site</h3> <p>This is the only version you\'re able to share under copyright. The accepted manuscript is the word file or Latex export you sent the publisher after peer-review and before formatting (publisher proofs).</p> <h3><span>&#10003;</span> Check there aren\'t publisher logos or formatting</h3> <p>It\'s normal to share accepted manuscripts as the research is the same. It\'s fine to save your file as a pdf, make small edits to formatting, fix typos, remove comments, and arrange figures.</p> </div> <h3 class="_oab_section _oab_get_email"><span>&#10003;</span> Tell us your email</h3> </div> <!-- <div class="_oab_section _oab_bronze_archivable" id="_oab_bronze_archivable"> <h2>Keep your paper freely available!</h2> <p>For now, <span class="_oab_journal">the journal</span> is sharing <span class="_oab_your_paper">your paper</span> for free, but that might change. You can do the following to ensure colleagues and the public can always freely read and cite it <span class="_oab_refs"></span>.</p> <div id="_oab_not_pdf"> <h3><span>&#10003;</span> Find the manuscript the journal accepted. It\'s not a PDF from the journal site</h3> <p>This is the only version you\'re able to share under copyright. The accepted manuscript is the word file or Latex export you sent the publisher after peer-review and before formatting (publisher proofs).</p> <h3><span>&#10003;</span> Check there aren\'t publisher logos or formatting</h3> <p>It\'s normal to share accepted manuscripts as the research is the same. It\'s fine to save your file as a pdf, make small edits to formatting, fix typos, remove comments, and arrange figures.</p> </div> <h3 class="_oab_section _oab_get_email"><span>&#10003;</span> Tell us your email</h3> </div> --> <div class="_oab_section _oab_dark_deposit" id="_oab_dark_deposit"> <h2>You can share your paper!</h2> <p>We checked and unfortunately <span class="_oab_journal">the journal</span> won\'t let you share <span class="_oab_your_paper">your paper</span> freely with everyone. <span class="_oab_refs"></span><br><br> The good news is the library can still legally make your paper much easier to find and access. We\'ll put the publisher PDF in <span class="_oab_repo">ScholarWorks</span> and then share it on your behalf whenever it is requested.</p> <h3 class="_oab_section _oab_get_email">All we need is your email</h3> </div> <div class="_oab_section _oab_get_email" id="_oab_get_email"> <p><input class="_oab_form" type="text" id="_oab_email" placeholder="" aria-label="Enter your email" style="box-shadow:none;"></input></p> <p class="_oab_section _oab_oa_deposit">We\'ll use this to send you a link. By depositing, you\'re agreeing to our <span class="_oab_terms">terms</span>.</p> <p class="_oab_section _oab_archivable">We\'ll only use this if something goes wrong.<br> <p class="_oab_section _oab_dark_deposit">We\'ll only use this to send you a link to your paper when it is in <span class="_oab_repo">ScholarWorks</span>. By depositing, you\'re agreeing to the <span class="_oab_terms">terms</span>.</p> </div> <div class="_oab_section _oab_archivable" id="_oab_archivable_file"> <h3>We\'ll check it\'s legal, then promote, and preserve your work</h3> <p><input type="file" name="file" id="_oab_file" class="_oab_form"></p> <p>By depositing you\'re agreeing to the <span class="_oab_terms">terms</span> and to license your work <span class="_oab_licence">CC-BY</span>.</p> </div> <div class="_oab_section _oab_oa_deposit _oab_archivable _oab_dark_deposit" id="_oab_deposits"> <p><a href="#" class="_oab_deposit btn-iu _oab_button _oab_loading" style="min-width:140px;" id="_oab_deposit">Deposit</a></p> <p><a href="#" class="_oab_restart" id="_oab_deposits_restart"><b>Do another</b></a></p> </div> </div> <div class="_oab_panel" id="_oab_done" style="display:none;"> <div class="_oab_done" id="_oab_confirm"> <h2>We need an earlier version</h2> <p>It looks like what you uploaded is a publisher\'s PDF which your journal prohibits legally sharing.<br><br> You\'re nearly done. We need the accepted version, not the PDF from the journal site.</p> <p><a href="#" class="_oab_reload btn-iu _oab_button" id="_oab_upload_again" style="min-width:140px;">Try uploading again</a></p> <p><a href="#" class="_oab_confirm _oab_loading" id="_oab_upload_accept"><b>My upload was an accepted manuscript</b></a></p> </div> <div class="_oab_done" id="_oab_check"> <h2>We\'ll double check your paper</h2> <p>You\'ve done your part for now. Hopefully, we\'ll send you a link soon. First, we\'ll check to make sure it\'s legal to share.</p> </div> <div class="_oab_done" id="_oab_partial"> <h2>Congrats, you\'re done!</h2> <p>Check back soon to see your paper live, or we\'ll email you with issues.</p> </div> <div class="_oab_done" id="_oab_zenodo"> <h2>Congrats! Your paper will be available to everyone, forever!</h2> <div id="_oab_zenodo_embargo"></div> <p><input id="_oab_zenodo_url" class="_oab_form" type="text" style="box-shadow:none;" value=""></input></p> <p>You can now put the link on your website, CV, any profiles, and ResearchGate.</p> </div> <div class="_oab_done" id="_oab_redeposit"> <h2>Congrats, you\'re done!</h2> <p>Check back soon to see your paper live, or we\'ll email you with issues.</p> </div> <div class="_oab_done" id="_oab_success"> <h2>Hurray, you\'re done!</h2> <p>We\'ll email you a link to your paper in <span class="_oab_repo">ScholarWorks</span> soon. Next time, before you publish check to see if your journal allows you to have the most impact by making your research available to everyone, for free.</p> </div> <div class="_oab_done" id="_oab_review"> <h2>You\'ve done your part</h2> <p>All that\'s left to do is wait. Once the journal gives you permission to share, come back and we\'ll help you finish the job.</p> </div> <p><a href="#" class="_oab_restart btn-iu _oab_button" id="_oab_done_restart" style="min-width:140px;">Do another</a></p> </div> <div id="_oab_error"></div> <div id="_oab_pilot"></div>';
+_oab.shareyourpaper_template = '<div class="_oab_panel" id="_oab_inputs"> \
+  <h2>Make your research visible and see 30% more citations</h2> \
+  <p><span id="_oab_lib_info">We can help you make your paper Open Access, for free, wherever you publish. \
+  It\'s legal and takes just minutes.</span> Join millions of researchers sharing their papers freely with \
+  colleagues and the public.</p> <h3>Start by entering the DOI of your paper</h3> <p>We\'ll gather information \
+  about your paper and find the easiest way to share it.</p> \
+  <p><input class="_oab_form" type="text" id="_oab_input" placeholder="e.g. 10.1126/scitranslmed.abc2344" aria-label="Enter a search term" style="box-shadow:none;"></input></p> \
+  <p><a class="_oab_find btn-iu _oab_button _oab_loading" href="#" id="_oab_find" aria-label="Search" style="min-width:140px;">Next</a></p> \
+  <p><a id="_oab_nodoi" href="mailto:help@openaccessbutton.org?subject=Help%20depositing%20my%20paper&body=Hi%2C%0D%0A%0D%0AI\'d%20like%20to%20deposit%3A%0D%0A%0D%0A%3C%3CPlease%20insert%20a%20full%20citation%3E%3E%0D%0A%0D%0ACan%20you%20please%20assist%20me%3F%0D%0A%0D%0AYours%20sincerely%2C"><b>My paper doesn\'t have a DOI</b></a></p> \
+</div> \
+<div class="_oab_panel" id="_oab_permissions" style="display:none;"> \
+  <div class="_oab_section _oab_oa" id="_oab_oa"> \
+    <h2>Your paper is already freely available!</h2> \
+    <p>Great news, you\'re already getting the benefits of sharing your work! Your publisher or co-author have already shared it.</p> \
+    <p><a target="_blank" href="#" class="_oab_oa_url btn-iu _oab_button" style="min-width:140px;">See free version</a></p> \
+    <p><a href="#" class="_oab_restart" id="_oab_restart"><b>Do another</b></a></p> \
+  </div> \
+  <div class="_oab_section _oab_permission_required" id="_oab_permission_required"> \
+    <h2>You may share your paper if you ask the journal</h2> \
+    <p>Unlike most, <span class="_oab_journal">the journal</span> requires that you ask them before you share your paper freely. Asking only takes a moment as we find out who to contact and have drafted an email for you.</p> \
+    <p><a target="_blank" id="_oab_reviewemail" href="#" class="btn-iu _oab_button" style="min-width:140px;">Review Email</a></p> <p><a target="_blank" id="_oab_permissionemail" class="_oab_restart" href="#"><b>I\'ve got permission now!</b></a></p> \
+  </div> \
+  <div class="_oab_section _oab_oa_deposit" id="_oab_oa_deposit"> \
+    <h2>Your paper is already freely available!</h2> \
+    <p>Great news, you\'re already getting the benefits of sharing your work! Your publisher or co-author have already shared a <a class="_oab_oa_url" id="_oab_goto_oa_url" target="_blank" href="#">freely available copy</a>.</p> \
+    <h3 class="_oab_section _oab_get_email">Please enter your email to confirm deposit</h3> \
+  </div> \
+  <div class="_oab_section _oab_archivable" id="_oab_archivable"> \
+    <h2>You can freely share your paper!</h2> \
+    <p><span class="_oab_library">The library has</span> checked and <span class="_oab_journal">the journal</span> encourages you to freely share <span class="_oab_your_paper">your paper</span> so colleagues and the public can freely read and cite it. <span class="_oab_refs"></span></p> \
+    <div id="_oab_not_pdf"> \
+      <h3><span>&#10003;</span> Find the manuscript the journal accepted. It\'s not a PDF from the journal site</h3> \
+      <p>This is the only version you\'re able to share under copyright. The accepted manuscript is the word file or Latex export you sent the publisher after peer-review and before formatting (publisher proofs).</p> \
+      <h3><span>&#10003;</span> Check there aren\'t publisher logos or formatting</h3> \
+      <p>It\'s normal to share accepted manuscripts as the research is the same. It\'s fine to save your file as a pdf, make small edits to formatting, fix typos, remove comments, and arrange figures.</p> \
+    </div> \
+    <h3 class="_oab_section _oab_get_email"><span>&#10003;</span> Tell us your email</h3> \
+  </div> \
+  <!-- <div class="_oab_section _oab_bronze_archivable" id="_oab_bronze_archivable"> \
+    <h2>Keep your paper freely available!</h2> \
+    <p>For now, <span class="_oab_journal">the journal</span> is sharing <span class="_oab_your_paper">your paper</span> for free, but that might change. You can do the following to ensure colleagues and the public can always freely read and cite it <span class="_oab_refs"></span>.</p> \
+    <div id="_oab_not_pdf"> \
+      <h3><span>&#10003;</span> Find the manuscript the journal accepted. It\'s not a PDF from the journal site</h3> \
+      <p>This is the only version you\'re able to share under copyright. The accepted manuscript is the word file or Latex export you sent the publisher after peer-review and before formatting (publisher proofs).</p> \
+      <h3><span>&#10003;</span> Check there aren\'t publisher logos or formatting</h3> \
+      <p>It\'s normal to share accepted manuscripts as the research is the same. It\'s fine to save your file as a pdf, make small edits to formatting, fix typos, remove comments, and arrange figures.</p> \
+    </div> \
+    <h3 class="_oab_section _oab_get_email"><span>&#10003;</span> Tell us your email</h3> \
+  </div> --> \
+  <div class="_oab_section _oab_dark_deposit" id="_oab_dark_deposit"> \
+    <h2>You can share your paper!</h2> \
+    <p>We checked and unfortunately <span class="_oab_journal">the journal</span> won\'t let you share <span class="_oab_your_paper">your paper</span> freely with everyone. <span class="_oab_refs"></span><br><br> The good news is the library can still legally make your paper much easier to find and access. We\'ll put the publisher PDF in <span class="_oab_repo">ScholarWorks</span> and then share it on your behalf whenever it is requested.</p> \
+    <h3 class="_oab_section _oab_get_email">All we need is your email</h3> \
+  </div> \
+  <div class="_oab_section _oab_get_email" id="_oab_get_email"> \
+    <p><input class="_oab_form" type="text" id="_oab_email" placeholder="" aria-label="Enter your email" style="box-shadow:none;"></input></p> \
+    <p class="_oab_section _oab_oa_deposit">We\'ll use this to send you a link. By depositing, you\'re agreeing to our <span class="_oab_terms">terms</span>.</p> \
+    <p class="_oab_section _oab_archivable">We\'ll only use this if something goes wrong.<br> \
+    <p class="_oab_section _oab_dark_deposit">We\'ll only use this to send you a link to your paper when it is in <span class="_oab_repo">ScholarWorks</span>. By depositing, you\'re agreeing to the <span class="_oab_terms">terms</span>.</p> \
+  </div> \
+  <div class="_oab_section _oab_archivable" id="_oab_archivable_file"> \
+    <h3>We\'ll check it\'s legal, then promote, and preserve your work</h3> \
+    <p><input type="file" name="file" id="_oab_file" class="_oab_form"></p> \
+    <p>By depositing you\'re agreeing to the <span class="_oab_terms">terms</span> and to license your work <span class="_oab_licence">CC-BY</span>.</p> \
+  </div> \
+  <div class="_oab_section _oab_oa_deposit _oab_archivable _oab_dark_deposit" id="_oab_deposits"> \
+    <p><a href="#" class="_oab_deposit btn-iu _oab_button _oab_loading" style="min-width:140px;" id="_oab_deposit">Deposit</a></p> \
+    <p><a href="#" class="_oab_restart" id="_oab_deposits_restart"><b>Do another</b></a></p> \
+  </div> \
+</div> \
+<div class="_oab_panel" id="_oab_done" style="display:none;"> \
+  <div class="_oab_done" id="_oab_confirm"> \
+    <h2>We need an earlier version</h2> \
+    <p>It looks like what you uploaded is a publisher\'s PDF which your journal prohibits legally sharing.<br><br> You\'re nearly done. We need the accepted version, not the PDF from the journal site.</p> \
+    <p><a href="#" class="_oab_reload btn-iu _oab_button" id="_oab_upload_again" style="min-width:140px;">Try uploading again</a></p> \
+    <p><a href="#" class="_oab_confirm _oab_loading" id="_oab_upload_accept"><b>My upload was an accepted manuscript</b></a></p> \
+  </div> \
+  <div class="_oab_done" id="_oab_check"> \
+    <h2>We\'ll double check your paper</h2> \
+    <p>You\'ve done your part for now. Hopefully, we\'ll send you a link soon. First, we\'ll check to make sure it\'s legal to share.</p> \
+  </div> \
+  <div class="_oab_done" id="_oab_partial"> \
+    <h2>Congrats, you\'re done!</h2> \
+    <p>Check back soon to see your paper live, or we\'ll email you with issues.</p> \
+  </div> \
+  <div class="_oab_done" id="_oab_zenodo"> \
+    <h2>Congrats! Your paper will be available to everyone, forever!</h2> \
+    <div id="_oab_zenodo_embargo"></div> \
+    <p><input id="_oab_zenodo_url" class="_oab_form" type="text" style="box-shadow:none;" value=""></input></p> \
+    <p>You can now put the link on your website, CV, any profiles, and ResearchGate.</p> \
+  </div> \
+  <div class="_oab_done" id="_oab_redeposit"> \
+    <h2>Congrats, you\'re done!</h2> \
+    <p>Check back soon to see your paper live, or we\'ll email you with issues.</p> \
+  </div> \
+  <div class="_oab_done" id="_oab_success"> \
+    <h2>Hurray, you\'re done!</h2> \
+    <p>We\'ll email you a link to your paper in <span class="_oab_repo">ScholarWorks</span> soon. Next time, before you publish check to see if your journal allows you to have the most impact by making your research available to everyone, for free.</p> \
+  </div> \
+  <div class="_oab_done" id="_oab_review"> \
+    <h2>You\'ve done your part</h2> \
+    <p>All that\'s left to do is wait. Once the journal gives you permission to share, come back and we\'ll help you finish the job.</p> \
+  </div> \
+  <p><a href="#" class="_oab_restart btn-iu _oab_button" id="_oab_done_restart" style="min-width:140px;">Do another</a></p> \
+</div> \
+<div id="_oab_error"></div> \
+<div id="_oab_pilot"></div>';
 
-// can pass in a key/value pair, or key can be a config object, in which case val can optionally be a user ID string,
-// or key can be a user ID string and val must be empty, or key and val can both be empty and config will attempt
-// to be retrieved from setup, or localstorage and/or from the API if a user ID is available from setup
+/* can pass in a key/value pair, or key can be a config object, in which case 
+   val can optionally be a user ID string, or key can be a user ID string and 
+   val must be empty, or key and val can both be empty and config will attempt
+   to be retrieved from setup, or localstorage and/or from the API if a user ID 
+   is available from setup */
 _oab.prototype.configure = function(key, val, build, preview) {
   var _whenready, cd, cw, d, k, lc, wc;
   if (typeof key === 'string' && (val == null) && key.startsWith('{')) {
     try {
       key = JSON.parse(key);
-    } catch (error1) {}
+    } catch (err) {}
   }
   if (typeof key === 'string' && (val == null) && ((this.uid == null) || this.uid === 'anonymous')) {
     this.uid = key;
@@ -1398,7 +1597,7 @@ _oab.prototype.configure = function(key, val, build, preview) {
           this.config = lc;
         }
       }
-    } catch (error1) {}
+    } catch (err) {}
     if (this.remote !== false && this.uid && this.uid !== 'anonymous' && JSON.stringify(this.config) === '{}') { // should a remote call always be made to check for superseded config if one is not provided at startup?
       _OA.jx(this.api + '/' + (this.plugin === 'instantill' ? 'ill' : 'deposit') + '/config?uid=' + this.uid, (res) => {
         console.log('Config retrieved from API');
@@ -1453,7 +1652,7 @@ _oab.prototype.configure = function(key, val, build, preview) {
     if (JSON.stringify(wc) !== '{}' && this.local !== false) {
       localStorage.setItem('_oab_config_' + this.plugin, JSON.stringify(wc));
     }
-  } catch (error1) {}
+  } catch (err) {}
   if (this.css !== false && this.config.css_off) {
     this.css = false;
     build = true;
@@ -1466,7 +1665,7 @@ _oab.prototype.configure = function(key, val, build, preview) {
     this.element = '#' + this.plugin;
   }
   _whenready = () => {
-    var aai, boro, dstr, el, gf, ncwc, nk, pilot, ref, ref1, ref2, ref3;
+    var aai, boro, dstr, el, gf, ncwc, nk, pilot;
     if (_OA.gebi(this.element)) {
       if (build !== false) {
         console.log('Building embed');
@@ -1494,7 +1693,7 @@ _oab.prototype.configure = function(key, val, build, preview) {
         }
         _OA.append(this.element, this.template);
         if (this.data.doi || this.data.title || this.data.url || this.data.id) {
-          _OA.set('#_oab_input', (ref = (ref1 = (ref2 = this.data.doi) != null ? ref2 : this.data.title) != null ? ref1 : this.data.url) != null ? ref : this.data.id);
+          _OA.set('#_oab_input', (this.data.doi ? this.data.doi : (this.data.title ? this.data.title : (this.data.url ? this.data.url : this.data.id))));
         }
         _OA.each('._oab_paper', (el) => {
           var cs;
@@ -1527,7 +1726,7 @@ _oab.prototype.configure = function(key, val, build, preview) {
           if (this.config.not_library) {
             _OA.html('._oab_library', 'We have');
           } else {
-            _OA.html('#_oab_lib_info', 'Share your paper with help from the library in ' + ((ref3 = this.config.repo_name) != null ? ref3 : 'ScholarWorks') + '. Legally, for free, in minutes. ');
+            _OA.html('#_oab_lib_info', 'Share your paper with help from the library in ' + (this.config.repo_name ? this.config.repo_name : 'ScholarWorks') + '. Legally, for free, in minutes. ');
           }
           if (this.config.repo_name) {
             _OA.html('._oab_repo', this.config.repo_name);
