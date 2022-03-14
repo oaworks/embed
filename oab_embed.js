@@ -1443,8 +1443,8 @@ _oab.instantill_template = '<div class="_oab_panel" id="_oab_inputs"> \
   <p><a href="#" class="_oab_find btn-iu _oab_button _oab_loading _oab_continue" id="_oab_continue" style="min-width:140px;">Continue</a></p> \
   <p> <a href="#" class="_oab_restart" id="_oab_try_again"><b>Try another</b></a> <span id="_oab_advanced_ill_form" style="display:none;"></span> </p> \
 </div> \
-<div class="_oab_panel" id="_oab_done" style="display:none;"> <\
-  div id="_oab_done_header"> \
+<div class="_oab_panel" id="_oab_done" style="display:none;"> \
+  <div id="_oab_done_header"> \
     <h2>Thanks! Your request has been received.</h2> \
     <p>And confirmation code and tell we will email soon - OR sorry we could not create an ILL, and refer back to library if possible.</p> \
   </div> \
