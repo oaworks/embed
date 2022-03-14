@@ -830,7 +830,7 @@ _oab.prototype.deposit = function(e) {
   // takes a file provided by user upload button and sends it to the API for 
   // deposit to institutional repository
   var d, data, fl, info, md;
-  //try {
+  try {
     try {
       e.preventDefault();
     } catch (err) {}
@@ -941,9 +941,9 @@ _oab.prototype.deposit = function(e) {
         return this.ping('shareyourpaper_couldnt_submit_deposit');
       });
     }
-  //} catch (err) {
-  //  return this.ping('shareyourpaper_try_deposit_catch');
-  //}
+  } catch (err) {
+    return this.ping('shareyourpaper_try_deposit_catch');
+  }
 };
 
 _oab.prototype.permissions = function(data) { 
@@ -1219,7 +1219,7 @@ _oab.prototype.findings = function(data) { // only used by instantill
 
 _oab.prototype.find = function(e) {
   var data, keys, i, k, len, v, val;
-  //try {
+  try {
     try {
       e.preventDefault();
     } catch (err) {}
@@ -1387,9 +1387,9 @@ _oab.prototype.find = function(e) {
         });
       }
     }
-  //} catch (err) {
-  //  return this.ping(this.plugin + '_try_find_catch');
-  //}
+  } catch (err) {
+    return this.ping(this.plugin + '_try_find_catch');
+  }
 };
 
 // the default css, optionally overridden at instantiation.
@@ -1588,7 +1588,7 @@ _oab.prototype.configure = function(key, val, build, preview) {
       }
     } catch (err) {}
     if (this.remote !== false && this.uid && this.uid !== 'anonymous' && JSON.stringify(this.config) === '{}') { // should a remote call always be made to check for superseded config if one is not provided at startup?
-      _OA.jx(this.api + '/' + (this.plugin === 'instantill' ? 'ill' : 'deposit') + '/config?uid=' + this.uid, (res) => {
+      _OA.jx((this.api.includes('beta.oa.works') ? 'https://dev.api.cottagelabs.com/service/oab' : 'https://api.openaccessbutton.org') + '/' + (this.plugin === 'instantill' ? 'ill' : 'deposit') + '/config?uid=' + this.uid, (res) => {
         console.log('Config retrieved from API');
         return this.configure(res);
       });
