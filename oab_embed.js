@@ -1406,8 +1406,8 @@ _oab.instantill_template = '<div class="_oab_panel" id="_oab_inputs"> \
   <div id="_oab_book_or_other"></div> \
   <div id="_oab_advanced_account_info"></div> \
 </div> \
-<div class="_oab_panel" id="_oab_findings" style="display:none;"> <\
-  div id="_oab_citation"> \
+<div class="_oab_panel" id="_oab_findings" style="display:none;"> \
+  <div id="_oab_citation"> \
     <h2>A title</h2> \
     <p><b>And citation string, OR demo title OR Unknown <span class="_oab_paper">article</span> and refer to library</b></p> \
   </div> \
