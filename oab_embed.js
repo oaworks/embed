@@ -568,7 +568,7 @@ _oab.prototype.ping = function(what) {
       }
       what = this.plugin + what;
     }
-    url = this.api + '/ping.png?action=' + what + '&from=' + this.uid + '&url=' + encodeURIComponent(window.location.href);
+    url = this.api + '/ping?action=' + what + '&from=' + this.uid + '&url=' + encodeURIComponent(window.location.href);
     if (this.config.pilot) {
       url += '&pilot=' + this.config.pilot;
     }
