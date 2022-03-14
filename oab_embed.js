@@ -1304,7 +1304,7 @@ _oab.prototype.find = function(e) {
       } else {
         return _OA.show('#_oab_error', '<p><span>&#10060;</span> Sorry please provide the full DOI, title, citation, PMID or PMC ID.</p>');
       }
-    } else if (this.data.doi && this.plugin === 'shareyourpaper' && (this.data.doi.startsWith('10') || !this.data.doi.includes('/') || !this.data.doi.includes('.') || this.data.doi.length < 8)) {
+    } else if (this.data.doi && this.plugin === 'shareyourpaper' && (!this.data.doi.startsWith('10') || !this.data.doi.includes('/') || !this.data.doi.includes('.') || this.data.doi.length < 8)) {
       delete this.data.doi;
       _OA.set('#_oab_input', '');
       _OA.gebi('_oab_input').focus();
