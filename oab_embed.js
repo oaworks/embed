@@ -1230,7 +1230,7 @@ _oab.prototype.findings = function(data) { // only used by instantill
 
 _oab.prototype.find = function(e) {
   var data, keys, i, k, len, v, val;
-  try {
+  //try {
     try {
       e.preventDefault();
     } catch (err) {}
@@ -1398,9 +1398,9 @@ _oab.prototype.find = function(e) {
         });
       }
     }
-  } catch (err) {
-    return this.ping(this.plugin + '_try_find_catch');
-  }
+  //} catch (err) {
+  //  return this.ping(this.plugin + '_try_find_catch');
+  //}
 };
 
 // the default css, optionally overridden at instantiation.
