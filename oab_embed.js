@@ -304,7 +304,7 @@ _OA.jx = function(url, data, success, error) {
    plugin, for different features, for example instantill and shareyourpaper. */
 _oab = function(opts) {
   var ap, c, configs, cs, csk, csv, eq, i, j, len, len1, o;
-  //try { // set the default options
+  try { // set the default options
     if (opts == null) {
       opts = {};
     }
@@ -425,9 +425,9 @@ _oab = function(opts) {
       return this.state(pe);
     });
     return this;
-  //} catch (err) {
-  //  return this.ping('instantill_or_shareyourpaper_try_initialise_catch');
-  //}
+  } catch (err) {
+    return this.ping('instantill_or_shareyourpaper_try_initialise_catch');
+  }
 };
 
 /* Now add methods to the _oab prototype. Some methods here will be general and 
@@ -614,34 +614,17 @@ _oab.prototype.validate = function() {
     email = _OA.get('#_oab_email');
     if (typeof email !== 'string') email = '';
     email = email.trim();
-    if (!email.length) {
+    if (!email.length || this.data.email.split('@').length !== 2) {
       _OA.show('#_oab_error', '<p>Please provide your university email address.</p>');
       _OA.css('#_oab_email', 'border-color', '#f04717');
       return _OA.gebi('#_oab_email').focus();
     } else {
-      this.loading();
-      return _OA.jx(this.api + '/validate?uid=' + this.uid + '&email=' + email, this.config, (res) => {
-        this.loading(false);
-        if (res === true) {
-          this.data.email = _OA.get('#_oab_email').trim();
-          if (this.plugin === 'instantill') {
-            return this.submit();
-          } else {
-            return this.deposit();
-          }
-        } else if (res === 'baddomain') {
-          return _OA.show('#_oab_error', '<p>Please try again with your university email address.</p>');
-        } else {
-          return _OA.show('#_oab_error', '<p>Sorry, your email does not look right. ' + (res !== false ? 'Did you mean ' + res + '? ' : '') + 'Please check and try again.</p>');
-        }
-      }, () => {
-        this.data.email = _OA.get('#_oab_email').trim();
-        if (this.plugin === 'instantill') {
-          return this.submit();
-        } else {
-          return this.deposit();
-        }
-      });
+      this.data.email = email;
+      if (this.plugin === 'instantill') {
+        return this.submit();
+      } else {
+        return this.deposit();
+      }
     }
   }
 };
