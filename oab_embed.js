@@ -311,6 +311,12 @@ _oab = function(opts) {
     for (o in opts) {
       this[o] = opts[o];
     }
+    if (this.api) {
+      // tidy up legacy domain names for simplifying use with legacy sites that have not had their config changed yet
+      this.api = this.api.replace('/service/oab', '');
+      this.api = this.api.replace('dev.api.cottagelabs.com', 'beta.oa.works');
+      this.api = this.api.replace('api.cottagelabs.com', 'api.oa.works');
+    }
     if (this.api == null) { // default API URL to contact
       this.api = window.location.host.includes('dev.') ? 'https://beta.oa.works' : 'https://api.oa.works';
     }
