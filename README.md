@@ -7,4 +7,31 @@ extended to support more OA.Works services in future.
 There is only one file, oab_embed.js (and a minified version). It starts with 
 some definitions of functions that are useful without using big libraries like 
 jQuery. These are defined on the _OA prefix. Then there is the general embed 
-functionality itself, defined on _oab
+functionality itself, defined on _oab. This includes functions that make calls 
+to the OA.Works API. Any new functionality requried to make such calls should 
+be added here.
+
+Then there are css and html templates for each service that needs them - for 
+example there is currently a shareyourpaper template and an instantill template.
+New ones could be added later.
+
+Next is the configure function. This is pretty complicated owing to a 
+combination of old and new config situations. It should be simplifed to expect 
+the config to be provided when the embed is instantiated on the web page it is 
+embedded into, but for now it makes various loops to try to retrieve a config 
+from the API, and these loops depend on timing of whether or not bootstrap 
+css values are found in the page or not, and also whether or not a DOI is 
+provided in the URL. The purpose here was to ensure that config setup is not 
+delayed by requests, but also that requests triggered by the URL are not delayed 
+by waiting for config to be retrieved.
+
+After config there's just the declarations of the two services the embed 
+currently provides, shareyourpaper and instantill. So either of these can be 
+used on a web page by adding a script tag to the embed file, then within a 
+javascript element on the page running the relevant service by instantiating 
+it such as syp = shareyourpaper();
+
+A config object can be provided at instantiation, see the source of the dev 
+site for an example:
+
+https://dev.shareyourpaper.org
