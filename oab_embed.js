@@ -304,7 +304,7 @@ _OA.jx = function(url, data, success, error) {
    plugin, for different features, for example instantill and shareyourpaper. */
 _oab = function(opts) {
   var ap, c, configs, cs, csk, csv, eq, i, j, len, len1, o;
-  try { // set the default options
+  //try { // set the default options
     if (opts == null) {
       opts = {};
     }
@@ -419,9 +419,9 @@ _oab = function(opts) {
       return this.state(pe);
     });
     return this;
-  } catch (err) {
-    return this.ping('instantill_or_shareyourpaper_try_initialise_catch');
-  }
+  //} catch (err) {
+  //  return this.ping('instantill_or_shareyourpaper_try_initialise_catch');
+  //}
 };
 
 /* Now add methods to the _oab prototype. Some methods here will be general and 
