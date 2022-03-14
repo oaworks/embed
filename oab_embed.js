@@ -614,7 +614,7 @@ _oab.prototype.validate = function() {
     email = _OA.get('#_oab_email');
     if (typeof email !== 'string') email = '';
     email = email.trim();
-    if (!email.length || this.data.email.split('@').length !== 2) {
+    if (!email.length || email.split('@').length !== 2) {
       _OA.show('#_oab_error', '<p>Please provide your university email address.</p>');
       _OA.css('#_oab_email', 'border-color', '#f04717');
       return _OA.gebi('#_oab_email').focus();
