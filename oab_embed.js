@@ -830,7 +830,7 @@ _oab.prototype.deposit = function(e) {
   // takes a file provided by user upload button and sends it to the API for 
   // deposit to institutional repository
   var d, data, fl, info, md;
-  try {
+  //try {
     try {
       e.preventDefault();
     } catch (err) {}
@@ -941,9 +941,9 @@ _oab.prototype.deposit = function(e) {
         return this.ping('shareyourpaper_couldnt_submit_deposit');
       });
     }
-  } catch (err) {
-    return this.ping('shareyourpaper_try_deposit_catch');
-  }
+  //} catch (err) {
+  //  return this.ping('shareyourpaper_try_deposit_catch');
+  //}
 };
 
 _oab.prototype.permissions = function(data) { 
