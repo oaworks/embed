@@ -1588,7 +1588,7 @@ _oab.prototype.configure = function(key, val, build, preview) {
       }
     } catch (err) {}
     if (this.remote !== false && this.uid && this.uid !== 'anonymous' && JSON.stringify(this.config) === '{}') { // should a remote call always be made to check for superseded config if one is not provided at startup?
-      _OA.jx((this.api.includes('beta.oa.works') ? 'https://dev.api.cottagelabs.com/service/oab' : 'https://api.openaccessbutton.org') + '/' + (this.plugin === 'instantill' ? 'ill' : 'deposit') + '/config?uid=' + this.uid, (res) => {
+      _OA.jx((this.api.includes('beta.oa.works') ? 'https://dev.api.cottagelabs.com/service/oab' : 'https://api.openaccessbutton.org') + '/' + (this.plugin === 'instantill' ? 'ill' : 'deposit') + '/config?uid=' + this.uid, undefined, (res) => {
         console.log('Config retrieved from API');
         return this.configure(res);
       });
