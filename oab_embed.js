@@ -914,7 +914,7 @@ _oab.prototype.deposit = function(e) {
         }
         data = this.file;
       }
-      return _OA.jx(this.api.replace('api.', '').replace('://', '://bg.') + '/deposit', data, (res) => {
+      return _OA.jx(this.api.replace('://', '://bg.') + '/deposit', data, (res) => {
         this.loading(false);
         if (typeof this.file !== 'boolean') {
           if ((res.zenodo !== undefined && res.zenodo.already) || (this.data.confirmed && (res.zenodo === undefined || !res.zenodo.url))) {
@@ -983,7 +983,7 @@ _oab.prototype.permissions = function(data) {
       } else if ((this.f.metadata.crossref_type !== undefined && this.f.metadata.crossref_type !== 'journal-article' && this.f.metadata.crossref_type !== 'proceedings-article') || (this.f.metadata.type !== undefined && this.f.metadata.type !== 'journal-article' && this.f.metadata.type !== 'proceedings-article')) {
         _OA.gebi('_oab_input').focus();
         nj = '<p>Sorry, right now this only works with academic journal articles.';
-        if (this.cml()) {
+        if (this.cml() || (this.config.old_way && this.config.old_way.includes('@'))) {
           nj += ' To get help with depositing, <a href="';
           nj += this.config.old_way ? (this.config.old_way.includes('@') ? 'mailto:' : '') + this.config.old_way : 'mailto:' + this.cml();
           nj += "?subject=Help%20depositing%20&body=Hi%2C%0D%0A%0D%0AI'd%20like%20to%20deposit%3A%0D%0A%0D%0A%3C%3CPlease%20insert%20a%20full%20citation%3E%3E%0D%0A%0D%0ACan%20you%20please%20assist%20me%3F%0D%0A%0D%0AYours%20sincerely%2C" + '">click here</a>';
@@ -1720,8 +1720,8 @@ _oab.prototype.configure = function(key, val, build, preview) {
         }
         // shareyourpaper exclusive configs
         if (this.plugin === 'shareyourpaper') {
-          if ((this.cml() != null) && (el = _OA.gebi('_oab_nodoi'))) {
-            el.setAttribute('href', el.getAttribute('href').replace('help@openaccessbutton.org', this.cml()));
+          if ((this.cml() != null || (this.config.old_way && this.config.old_way.includes('@'))) && (el = _OA.gebi('_oab_nodoi'))) {
+            el.setAttribute('href', el.getAttribute('href').replace('help@openaccessbutton.org', (this.config.old_way && this.config.old_way.includes('@') ? this.config.old_way: this.cml())));
           }
           if (this.config.not_library) {
             _OA.html('._oab_library', 'We have');
