@@ -1807,7 +1807,9 @@ _oaw.prototype.configure = function(key, val, build, preview) {
           return this.deposit(e);
         });
       }
-      if (el = _OA.gebi('_oaw_config')) {
+      el = _OA.gebi('_oaw_config');
+      if (!el) el = _OA.gebi('_oab_config');
+      if (el) {
         ncwc = JSON.parse(JSON.stringify(wc));
         nk = {
           ill_institution: 'institution', // translate instantill old config keys
