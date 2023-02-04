@@ -1504,7 +1504,7 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs"> \
     <h3 class="_oaw_section _oaw_get_email"><span>&#10003;</span> Tell us your email</h3> \
   </div> --> \
   <div class="_oaw_section _oaw_dark_deposit" id="_oaw_dark_deposit"> \
-    <h2>You can share your paper!</h2> \
+    <h2>You can share your paper on request!</h2> \
     <p>We checked and unfortunately <span class="_oaw_journal">the journal</span> won\'t let you share <span class="_oaw_your_paper">your paper</span> freely with everyone. <span class="_oaw_refs"></span><br><br> The good news is the library can still legally make your paper much easier to find and access. We\'ll put the publisher PDF in <span class="_oaw_repo">ScholarWorks</span> and then share it on your behalf whenever it is requested.</p> \
     <h3 class="_oaw_section _oaw_get_email">All we need is your email</h3> \
   </div> \
