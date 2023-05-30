@@ -276,10 +276,14 @@ _OA.jx = function(url, data, success, error) {
       } catch (err) {
         console.log(err);
         try {
-          success(xhr);
+          success(xhr.response, xhr);
         } catch (err) {
           try {
-            error(xhr);
+            try {
+              success(xhr);
+            } catch (err) {
+              error(xhr, err);
+            }
           } catch (err) {}
         }
       }
@@ -810,7 +814,7 @@ _oaw.prototype.done = function(res, msg) { // all the things to do when a plugin
         _OA.show('#_oaw_done_restart');
       }
     } else if (res) {
-      _OA.html('#_oaw_done_header', '<h3>Thanks! Your request has been received</h3><p>Your confirmation code is: ' + res + ', this will not be emailed to you. The ' + (this.config.say_paper ? 'paper' : 'article') + ' will be sent to ' + this.data.email + ' as soon as possible.</p>'); // only instantill falls through to here
+      _OA.html('#_oaw_done_header', '<h3>Thanks! Your request has been received</h3><p>Your confirmation code is: ' + res._id + ', this will not be emailed to you. The ' + (this.config.say_paper ? 'paper' : 'article') + ' will be sent to ' + this.data.email + ' as soon as possible.</p>'); // only instantill falls through to here
     } else {
       _OA.html('#_oaw_done_header', '<h3>Sorry, we were not able to create an Interlibrary Loan request for you.</h3><p>' + this.contact() + '</p>');
       _OA.html('#_oaw_done_restart', 'Try another');
