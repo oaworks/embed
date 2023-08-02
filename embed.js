@@ -1022,7 +1022,7 @@ _oaw.prototype.permissions = function(data) {
           _OA.set('#_oaw_email', 'placeholder', ph);
           _OA.html('._oaw_terms', tcs);
         }
-        refs = 'You may consult the journal’s policy here: ';
+        refs = 'View the journal’s policy: ';
         try {
           for (p in this.f.permissions.best_permission.provenance.archiving_policy) {
             refs += '<a id="_oaw_policy_text" target="_blank" href="' + this.f.permissions.best_permission.provenance.archiving_policy[p] + '" rel="noopener noreferrer">[<span class="sr-only visually-hidden">policy text #</span>' + (parseInt(p) + 1) + ']<span class="sr-only visually-hidden"> (opens in a new tab)</span></a>';
@@ -1492,7 +1492,7 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-li
   </div> \
   <div class="_oaw_section _oaw_archivable" id="_oaw_archivable"> \
     <h2>You can freely share your paper!</h2> \
-    <p><span class="_oaw_library">The library has</span> checked and <span class="_oaw_journal">the journal</span> encourages you to freely share <span class="_oaw_your_paper">your paper</span> so colleagues and the public can freely read and cite it. <span class="_oaw_refs"></span></p> \
+    <p><span class="_oaw_library">The library has</span> checked and <span class="_oaw_journal">the journal</span> encourages you to freely share <span class="_oaw_your_paper">your paper</span> so colleagues and the public can freely read and cite it.</p> \
     <div id="_oaw_not_pdf"> \
       <h3><span>&#10003;</span> Find the manuscript the journal accepted. It\'s not a PDF from the journal site</h3> \
       <p>This is the only version you\'re able to share under copyright. The accepted manuscript is the word file or Latex export you sent the publisher after peer-review and before formatting (publisher proofs).</p> \
@@ -1503,7 +1503,7 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-li
   </div> \
   <!-- <div class="_oaw_section _oaw_bronze_archivable" id="_oaw_bronze_archivable"> \
     <h2>Keep your paper freely available!</h2> \
-    <p>For now, <span class="_oaw_journal">the journal</span> is sharing <span class="_oaw_your_paper">your paper</span> for free, but that might change. You can do the following to ensure colleagues and the public can always freely read and cite it. <span class="_oaw_refs"></span></p> \
+    <p>For now, <span class="_oaw_journal">the journal</span> is sharing <span class="_oaw_your_paper">your paper</span> for free, but that might change. You can do the following to ensure colleagues and the public can always freely read and cite it.</p> \
     <div id="_oaw_not_pdf"> \
       <h3><span>&#10003;</span> Find the manuscript the journal accepted. It\'s not a PDF from the journal site</h3> \
       <p>This is the only version you\'re able to share under copyright. The accepted manuscript is the word file or Latex export you sent the publisher after peer-review and before formatting (publisher proofs).</p> \
@@ -1514,7 +1514,7 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-li
   </div> --> \
   <div class="_oaw_section _oaw_dark_deposit" id="_oaw_dark_deposit"> \
     <h2>You can share your paper on request!</h2> \
-    <p>We checked and unfortunately <span class="_oaw_journal">the journal</span> won\'t let you share <span class="_oaw_your_paper">your paper</span> freely with everyone. <span class="_oaw_refs"></span></p>\
+    <p>We checked and unfortunately <span class="_oaw_journal">the journal</span> won\'t let you share <span class="_oaw_your_paper">your paper</span> freely with everyone.</p>\
     <p> The good news is the library can still legally make your paper much easier to find and access. We\'ll put the publisher PDF in <span class="_oaw_repo">ScholarWorks</span> and then share it on your behalf whenever it is requested.</p> \
     <h3 class="_oaw_section _oaw_get_email">All we need is your email</h3> \
   </div> \
@@ -1522,12 +1522,12 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-li
     <p><input class="_oaw_form" type="text" id="_oaw_email" placeholder="" aria-label="Enter your email" style="box-shadow:none;"></input></p> \
     <p class="_oaw_section _oaw_oa_deposit">We\'ll use this to send you a link. By depositing, you\'re agreeing to our <span class="_oaw_terms"></span>.</p> \
     <p class="_oaw_section _oaw_archivable">We\'ll only use this if something goes wrong.<br> \
-    <p class="_oaw_section _oaw_dark_deposit">We\'ll only use this to send you a link to your paper when it is in <span class="_oaw_repo">ScholarWorks</span>. By depositing, you\'re agreeing to the <span class="_oaw_terms"></span>.</p> \
+    <p class="_oaw_section _oaw_dark_deposit">We\'ll only use this to send you a link to your paper when it is in <span class="_oaw_repo">ScholarWorks</span>. By depositing, you\'re agreeing to the <span class="_oaw_terms"></span>. </p> \
   </div> \
   <div class="_oaw_section _oaw_archivable" id="_oaw_archivable_file"> \
     <h3>We\'ll check it\'s legal, then promote, and preserve your work</h3> \
     <p><input type="file" name="file" id="_oaw_file" class="_oaw_form"></p> \
-    <p>By depositing, you\'re agreeing to the <span class="_oaw_terms"></span>. You must also license your work <span class="_oaw_licence" style="text-transform: uppercase;">CC-BY</span>.</p> \
+    <p>By depositing, you\'re agreeing to the <span class="_oaw_terms"></span>. You must also license your work <span class="_oaw_licence" style="text-transform: uppercase;">CC-BY</span>. <span class="_oaw_refs"></span></p> \
   </div> \
   <div class="_oaw_section _oaw_oa_deposit _oaw_archivable _oaw_dark_deposit" id="_oaw_deposits"> \
     <p><a href="#" class="_oaw_deposit btn-iu _oaw_button _oaw_loading" style="min-width:140px;" id="_oaw_deposit">Deposit</a></p> \
