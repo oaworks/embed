@@ -860,7 +860,7 @@ _oaw.prototype.deposit = function(e) {
         this.file = new FormData();
         this.file.append('file', fl.files[0]);
       } else if (this.file !== true) { // can be set to true when dark deposit is being followed - no file required. Or a demo may set it to true
-        _OA.show('#_oaw_error', '<p>Whoops, you need to give us a file! Check it\'s uploaded.</p>');
+        _OA.show('#_oaw_error', '<p aria-live="polite">Whoops, you need to give us a file! Check it\'s uploaded.</p>');
         _OA.css('#_oaw_file', 'border-color', '#f04717');
         return;
       }
@@ -1459,7 +1459,7 @@ _oaw.instantill_template = '<div class="_oaw_panel" id="_oaw_inputs"> \
 <div id="_oaw_error"></div> \
 <div id="_oaw_pilot"></div>';
 
-_oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs"> \
+_oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-live="polite"> \
   <h2>Make your research visible and see 30% more citations</h2> \
   <p><span id="_oaw_lib_info">We can help you make your paper Open Access, for free, wherever you publish. \
   It\'s legal and takes just minutes.</span> Join millions of researchers sharing their papers freely with \
@@ -1469,7 +1469,7 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs"> \
   <p><a class="_oaw_find btn-iu _oaw_button _oaw_loading" href="#" id="_oaw_find" aria-label="Search" style="min-width:140px;">Next</a></p> \
   <p><a id="_oaw_nodoi" href="mailto:help@openaccessbutton.org?subject=Help%20depositing%20my%20paper&body=Hi%2C%0D%0A%0D%0AI\'d%20like%20to%20deposit%3A%0D%0A%0D%0A%3C%3CPlease%20insert%20a%20full%20citation%3E%3E%0D%0A%0D%0ACan%20you%20please%20assist%20me%3F%0D%0A%0D%0AYours%20sincerely%2C"><b>My paper doesn\'t have a DOI</b></a></p> \
 </div> \
-<div class="_oaw_panel" id="_oaw_permissions" style="display:none;"> \
+<div class="_oaw_panel" id="_oaw_permissions" style="display:none;" aria-live="polite"> \
   <div class="_oaw_section _oaw_oa" id="_oaw_oa"> \
     <h2>Your paper is already freely available!</h2> \
     <p>Great news, you\'re already getting the benefits of sharing your work! Your publisher or co-author have already shared it.</p> \
@@ -1533,7 +1533,7 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs"> \
     <p><a href="#" class="_oaw_restart" id="_oaw_deposits_restart"><b>Do another</b></a></p> \
   </div> \
 </div> \
-<div class="_oaw_panel" id="_oaw_done" style="display:none;"> \
+<div class="_oaw_panel" id="_oaw_done" style="display:none;" aria-live="polite"> \
   <div class="_oaw_done" id="_oaw_confirm"> \
     <h2>We need an earlier version</h2> \
     <p>It looks like what you uploaded is a publisher\'s PDF which your journal prohibits legally sharing.<br><br> You\'re nearly done. We need the accepted version, not the PDF from the journal site.</p> \
