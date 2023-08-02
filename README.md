@@ -50,3 +50,27 @@ To deploy live, go to the live/oaworks/embed folder and git pull, git merge
 origin/develop, git push. Then go to live/oaworks/website and node build.js 
 to update the live site assets.
 
+## To run locally 
+
+Simply create a static file containing rudimentary HTML markup (e.g. named `test.html`), place it at the root directory, and copy the following code into it, replacing text in `[brackets]` with the right information: 
+
+```html 
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <title>local embed test</title>
+  </head>
+
+ <body>
+
+   <div id="shareyourpaper"></div>
+   <script src="embed.js"></script> <script>_oab=shareyourpaper({api: '[ASK FOR API ACCESS]', uid: "[UID HERE]", config: { "owner": "[EMAIL HERE]" }});</script>
+
+ </body>
+
+</html>
+``` 
+
+You may now make any modifications to the `embed.js` code on your own branch and see your changes with every page refresh. 
