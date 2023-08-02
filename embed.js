@@ -1022,11 +1022,15 @@ _oaw.prototype.permissions = function(data) {
           _OA.set('#_oaw_email', 'placeholder', ph);
           _OA.html('._oaw_terms', tcs);
         }
-        refs = '';
+        refs = 'You may consult the journal’s policy here: ';
         try {
           for (p in this.f.permissions.best_permission.provenance.archiving_policy) {
-            refs += '<li><a id="_oaw_policy_text" target="_blank" href="' + this.f.permissions.best_permission.provenance.archiving_policy[p] + '" rel="noopener noreferrer">See policy text<span class="sr-only visually-hidden"> (opens in a new tab)</span></a></li>';
+            refs += '<a id="_oaw_policy_text" target="_blank" href="' + this.f.permissions.best_permission.provenance.archiving_policy[p] + '" rel="noopener noreferrer">[<span class="sr-only visually-hidden">policy text #</span>' + (parseInt(p) + 1) + ']<span class="sr-only visually-hidden"> (opens in a new tab)</span></a>';
+            if ((parseInt(p)) !== this.f.permissions.best_permission.provenance.archiving_policy.length - 1) {
+              refs += ', ';
+            }
           }
+          refs += '.';
         } catch(err) {}
         _OA.html('._oaw_refs', refs);
         paper = this.f.metadata.doi ? '<a id="_oaw_your_paper" target="_blank" href="https://doi.org/' + this.f.metadata.doi + '" rel="noopener noreferrer">your paper<span class="sr-only visually-hidden"> (opens in a new tab)</span></a>' : 'your paper';
@@ -1488,8 +1492,7 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-li
   </div> \
   <div class="_oaw_section _oaw_archivable" id="_oaw_archivable"> \
     <h2>You can freely share your paper!</h2> \
-    <p><span class="_oaw_library">The library has</span> checked and <span class="_oaw_journal">the journal</span> encourages you to freely share <span class="_oaw_your_paper">your paper</span> so colleagues and the public can freely read and cite it.</p> \
-    <ol class="_oaw_refs"></ol>\
+    <p><span class="_oaw_library">The library has</span> checked and <span class="_oaw_journal">the journal</span> encourages you to freely share <span class="_oaw_your_paper">your paper</span> so colleagues and the public can freely read and cite it. <span class="_oaw_refs"></span></p> \
     <div id="_oaw_not_pdf"> \
       <h3><span>&#10003;</span> Find the manuscript the journal accepted. It\'s not a PDF from the journal site</h3> \
       <p>This is the only version you\'re able to share under copyright. The accepted manuscript is the word file or Latex export you sent the publisher after peer-review and before formatting (publisher proofs).</p> \
@@ -1500,8 +1503,7 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-li
   </div> \
   <!-- <div class="_oaw_section _oaw_bronze_archivable" id="_oaw_bronze_archivable"> \
     <h2>Keep your paper freely available!</h2> \
-    <p>For now, <span class="_oaw_journal">the journal</span> is sharing <span class="_oaw_your_paper">your paper</span> for free, but that might change. You can do the following to ensure colleagues and the public can always freely read and cite it.</p> \
-    <ol class="_oaw_refs"></ol>\
+    <p>For now, <span class="_oaw_journal">the journal</span> is sharing <span class="_oaw_your_paper">your paper</span> for free, but that might change. You can do the following to ensure colleagues and the public can always freely read and cite it. <span class="_oaw_refs"></span></p> \
     <div id="_oaw_not_pdf"> \
       <h3><span>&#10003;</span> Find the manuscript the journal accepted. It\'s not a PDF from the journal site</h3> \
       <p>This is the only version you\'re able to share under copyright. The accepted manuscript is the word file or Latex export you sent the publisher after peer-review and before formatting (publisher proofs).</p> \
@@ -1512,8 +1514,7 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-li
   </div> --> \
   <div class="_oaw_section _oaw_dark_deposit" id="_oaw_dark_deposit"> \
     <h2>You can share your paper on request!</h2> \
-    <p>We checked and unfortunately <span class="_oaw_journal">the journal</span> won\'t let you share <span class="_oaw_your_paper">your paper</span> freely with everyone.</p>\
-    <ol class="_oaw_refs"></ol>\
+    <p>We checked and unfortunately <span class="_oaw_journal">the journal</span> won\'t let you share <span class="_oaw_your_paper">your paper</span> freely with everyone. <span class="_oaw_refs"></span></p>\
     <p> The good news is the library can still legally make your paper much easier to find and access. We\'ll put the publisher PDF in <span class="_oaw_repo">ScholarWorks</span> and then share it on your behalf whenever it is requested.</p> \
     <h3 class="_oaw_section _oaw_get_email">All we need is your email</h3> \
   </div> \
