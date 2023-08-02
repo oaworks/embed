@@ -991,9 +991,9 @@ _oaw.prototype.permissions = function(data) {
         _OA.hide('._oaw_section');
         _OA.show('#_oaw_permissions');
         this.loading(false);
-        tcs = '<a id="_oaw_terms" href="https://oa.works/policies/terms/" target="_blank" rel="noopener">OA.Works terms<span class="sr-only is-sr-only show-for-sr"> (opens in a new tab)</span></a>';
+        tcs = '<a id="_oaw_terms" href="https://oa.works/policies/terms/" target="_blank" rel="noopener">OA.Works terms<span class="sr-only"> (opens in a new tab)</span></a>';
         if (this.config.terms) {
-          tcs += ' and <a id="_oaw_config_terms" href="' + this.config.terms + '" target="_blank" rel="noopener noreferrer">additional terms<span class="sr-only is-sr-only show-for-sr"> (opens in a new tab)</span></a>';
+          tcs += ' and <a id="_oaw_config_terms" href="' + this.config.terms + '" target="_blank" rel="noopener noreferrer">additional terms<span class="sr-only"> (opens in a new tab)</span></a>';
         }
         ph = 'your.name@institution.edu';
         if ((this.config.email_domains != null) && this.config.email_domains.length) {
@@ -1025,11 +1025,11 @@ _oaw.prototype.permissions = function(data) {
         refs = '';
         try {
           for (p in this.f.permissions.best_permission.provenance.archiving_policy) {
-            refs += '<li><a id="_oaw_policy_text" target="_blank" href="' + this.f.permissions.best_permission.provenance.archiving_policy[p] + '" rel="noopener noreferrer">See policy text<span class="sr-only is-sr-only show-for-sr"> (opens in a new tab)</span></a></li>';
+            refs += '<li><a id="_oaw_policy_text" target="_blank" href="' + this.f.permissions.best_permission.provenance.archiving_policy[p] + '" rel="noopener noreferrer">See policy text<span class="sr-only"> (opens in a new tab)</span></a></li>';
           }
         } catch(err) {}
         _OA.html('._oaw_refs', refs);
-        paper = this.f.metadata.doi ? '<a id="_oaw_your_paper" target="_blank" href="https://doi.org/' + this.f.metadata.doi + '" rel="noopener noreferrer">your paper<span class="sr-only is-sr-only show-for-sr"> (opens in a new tab)</span></a>' : 'your paper';
+        paper = this.f.metadata.doi ? '<a id="_oaw_your_paper" target="_blank" href="https://doi.org/' + this.f.metadata.doi + '" rel="noopener noreferrer">your paper<span class="sr-only"> (opens in a new tab)</span></a>' : 'your paper';
         _OA.html('._oaw_your_paper', (this.f.permissions.best_permission.version === 'publishedVersion' ? 'the publisher pdf of ' : '') + paper);
         _OA.html('._oaw_journal', (this.f.metadata.shortname ? this.f.metadata.shortname : 'the journal'));
         if (this.f.url) {
@@ -1294,7 +1294,7 @@ _oaw.prototype.find = function(e) {
         delete this.data.title;
         delete this.data.url;
         delete this.data.id;
-        return _OA.show('#_oaw_error', '<p>Please provide a DOI. If you\'re not sure what DOIs are, learn about them in this article <a id="_oaw_doi_howto" href="https://library.uic.edu/help/article/1966/what-is-a-doi-and-how-do-i-use-them-in-citations" target="_blank" rel="noopener noferrer">“What is a DOI and how do I use them in citations?” <span class="sr-only is-sr-only show-for-sr ">(opens in a new tab)</span></a>.</p>');
+        return _OA.show('#_oaw_error', '<p>Please provide a DOI. If you\'re not sure what DOIs are, learn about them in this article <a id="_oaw_doi_howto" href="https://library.uic.edu/help/article/1966/what-is-a-doi-and-how-do-i-use-them-in-citations" target="_blank" rel="noopener noferrer">“What is a DOI and how do I use them in citations?” <span class="sr-only ">(opens in a new tab)</span></a>.</p>');
       } else {
         return _OA.show('#_oaw_error', '<p><span>&#10060;</span> Sorry please provide the full DOI, title, citation, PMID or PMC ID.</p>');
       }
@@ -1302,7 +1302,7 @@ _oaw.prototype.find = function(e) {
       delete this.data.doi;
       _OA.set('#_oaw_input', '');
       _OA.gebi('_oaw_input').focus();
-      return _OA.show('#_oaw_error', '<p>Please provide a DOI. If you\'re not sure what DOIs are, learn about them in this article <a id="_oaw_doi_howto" href="https://library.uic.edu/help/article/1966/what-is-a-doi-and-how-do-i-use-them-in-citations" target="_blank" rel="noopener noferrer">“What is a DOI and how do I use them in citations?”<span class="sr-only is-sr-only show-for-sr"> (opens in a new tab)</span></a>.</p>');
+      return _OA.show('#_oaw_error', '<p>Please provide a DOI. If you\'re not sure what DOIs are, learn about them in this article <a id="_oaw_doi_howto" href="https://library.uic.edu/help/article/1966/what-is-a-doi-and-how-do-i-use-them-in-citations" target="_blank" rel="noopener noferrer">“What is a DOI and how do I use them in citations?”<span class="sr-only"> (opens in a new tab)</span></a>.</p>');
     } else {
       this.state();
       this.loading();
@@ -1401,6 +1401,7 @@ _oaw.prototype.find = function(e) {
 _oaw.css = '<style>\
 ._oaw_form { display: inline-block; width: 100%; height: 34px; padding: 6px 12px; font-size: 1em; line-height: 1.428571429; color: #555555; vertical-align: middle; background-color: #ffffff; background-image: none; border: 1px solid #cccccc; border-radius: 4px; -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; } \
 ._oaw_button { display: table-cell; height:34px; padding: 6px 3px; margin-bottom: 0; font-size: 1em; font-weight: normal; line-height: 1.428571429; text-decoration: none; text-align: center; white-space: nowrap; vertical-align: middle; cursor: pointer; background-image: none; border: 1px solid transparent; border-radius: 4px; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; user-select: none; color: #ffffff; background-color: #428bca; border-color: #357ebd; } \
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }\
 </style>';
 
 _oaw.instantill_template = '<div class="_oaw_panel" id="_oaw_inputs"> \
@@ -1430,7 +1431,7 @@ _oaw.instantill_template = '<div class="_oaw_panel" id="_oaw_inputs"> \
     <h3><br>Ask the library to send you a digital copy via Interlibrary Loan</h3> \
     <div id="_oaw_cost_time"><p>It is free to you, and we\'ll usually email the link within 24 hours.<br></p></div> \
     <div id="_oaw_collect_email"> \
-      <p id="_oaw_terms_note"><input type="checkbox" id="_oaw_read_terms"> I have read the <a id="_oaw_terms_link" target="_blank" href="#" rel="noopener noreferrer">terms and conditions<span class="sr-only is-sr-only show-for-sr"> (opens in a new tab)</span></a></p> \
+      <p id="_oaw_terms_note"><input type="checkbox" id="_oaw_read_terms"> I have read the <a id="_oaw_terms_link" target="_blank" href="#" rel="noopener noreferrer">terms and conditions<span class="sr-only"> (opens in a new tab)</span></a></p> \
       <p><input placeholder="Your university email address" id="_oaw_email" type="text" class="_oaw_form"></p> \
     </div> \
     <p><a class="_oaw_submit btn-iu _oaw_button _oaw_loading" href="#" id="_oaw_submit" style="min-width:140px;">Complete request</a></p> \
@@ -1472,17 +1473,17 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs"> \
   <div class="_oaw_section _oaw_oa" id="_oaw_oa"> \
     <h2>Your paper is already freely available!</h2> \
     <p>Great news, you\'re already getting the benefits of sharing your work! Your publisher or co-author have already shared it.</p> \
-    <p><a target="_blank" href="#" class="_oaw_oa_url btn-iu _oaw_button" style="min-width:140px;" rel="noopener noreferrer">See free version<span class="sr-only is-sr-only show-for-sr"> (opens in a new tab)</span></a></p> \
+    <p><a target="_blank" href="#" class="_oaw_oa_url btn-iu _oaw_button" style="min-width:140px;" rel="noopener noreferrer">See free version<span class="sr-only"> (opens in a new tab)</span></a></p> \
     <p><a href="#" class="_oaw_restart" id="_oaw_restart"><b>Do another</b></a></p> \
   </div> \
   <div class="_oaw_section _oaw_permission_required" id="_oaw_permission_required"> \
     <h2>You may share your paper if you ask the journal</h2> \
     <p>Unlike most, <span class="_oaw_journal">the journal</span> requires that you ask them before you share your paper freely. Asking only takes a moment as we find out who to contact and have drafted an email for you.</p> \
-    <p><a target="_blank" id="_oaw_reviewemail" href="#" class="btn-iu _oaw_button" style="min-width:140px;" rel="noopener noreferrer">Review Email</a></p> <p><a target="_blank" id="_oaw_permissionemail" class="_oaw_restart" href="#"><b>I\'ve got permission now!<span class="sr-only is-sr-only show-for-sr"> (opens in a new tab)</span></b></a></p> \
+    <p><a target="_blank" id="_oaw_reviewemail" href="#" class="btn-iu _oaw_button" style="min-width:140px;" rel="noopener noreferrer">Review Email</a></p> <p><a target="_blank" id="_oaw_permissionemail" class="_oaw_restart" href="#"><b>I\'ve got permission now!<span class="sr-only"> (opens in a new tab)</span></b></a></p> \
   </div> \
   <div class="_oaw_section _oaw_oa_deposit" id="_oaw_oa_deposit"> \
     <h2>Your paper is already freely available!</h2> \
-    <p>Great news, you\'re already getting the benefits of sharing your work! Your publisher or co-author have already shared a <a class="_oaw_oa_url" id="_oaw_goto_oa_url" target="_blank" href="#" rel="noopener noreferrer">freely available copy<span class="sr-only is-sr-only show-for-sr"> (opens in a new tab)</span></a>.</p> \
+    <p>Great news, you\'re already getting the benefits of sharing your work! Your publisher or co-author have already shared a <a class="_oaw_oa_url" id="_oaw_goto_oa_url" target="_blank" href="#" rel="noopener noreferrer">freely available copy<span class="sr-only"> (opens in a new tab)</span></a>.</p> \
     <h3 class="_oaw_section _oaw_get_email">Please enter your email to confirm deposit</h3> \
   </div> \
   <div class="_oaw_section _oaw_archivable" id="_oaw_archivable"> \
@@ -1708,9 +1709,9 @@ _oaw.prototype.configure = function(key, val, build, preview) {
           pilot = '<p><br>Notice a change? We\'re testing a simpler and faster way to ' + (this.plugin === 'instantill' ? 'get' : 'deposit') + ' your ' + (this.config.say_paper ? 'paper' : 'article') + (this.plugin === 'instantill' ? '' : 's') + '. You can ';
           pilot += '<a href="mailto:' + this.cml() + '">give feedback</a> or ';
           if (this.plugin === 'instantill') {
-            pilot += '<a class="_oaw_ping" message="instantill_use_the_old_form" target="_blank" href="' + (this.config.advanced_ill_form ? this.config.advanced_ill_form : this.config.ill_form ? this.config.ill_form : 'mailto:' + this.cml()) + '" rel="noopener noreferrer">use the old form<span class="sr-only is-sr-only show-for-sr"> (opens in a new tab)</span></a>.</p>';
+            pilot += '<a class="_oaw_ping" message="instantill_use_the_old_form" target="_blank" href="' + (this.config.advanced_ill_form ? this.config.advanced_ill_form : this.config.ill_form ? this.config.ill_form : 'mailto:' + this.cml()) + '" rel="noopener noreferrer">use the old form<span class="sr-only"> (opens in a new tab)</span></a>.</p>';
           } else {
-            pilot += '<a class="_oaw_ping" message="shareyourpaper_use_the_old_form" target="_blank" href="' + (this.config.old_way ? (this.config.old_way.includes('@') ? 'mailto:' : '') + this.config.old_way : 'mailto:' + this.cml()) + '" rel="noopener noreferrer">use the old way<span class="sr-only is-sr-only show-for-sr"> (opens in a new tab)</span></a>.</p>';
+            pilot += '<a class="_oaw_ping" message="shareyourpaper_use_the_old_form" target="_blank" href="' + (this.config.old_way ? (this.config.old_way.includes('@') ? 'mailto:' : '') + this.config.old_way : 'mailto:' + this.cml()) + '" rel="noopener noreferrer">use the old way<span class="sr-only"> (opens in a new tab)</span></a>.</p>';
           }
           _OA.html('#_oaw_pilot', pilot);
         } else {
