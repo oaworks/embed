@@ -991,7 +991,7 @@ _oaw.prototype.permissions = function(data) {
         _OA.hide('._oaw_section');
         _OA.show('#_oaw_permissions');
         this.loading(false);
-        tcs = 'terms <a id="_oaw_terms" href="https://openaccessbutton.org/terms" target="_blank">[1]</a>';
+        tcs = '<a id="_oaw_terms" href="https://oa.works/policies/terms/" target="_blank" rel="noopener">OA.Works terms</a>';
         if (this.config.terms) {
           tcs += ' <a id="_oaw_config_terms" href="' + this.config.terms + '" target="_blank">[2]</a>';
         }
@@ -1514,14 +1514,14 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs"> \
   </div> \
   <div class="_oaw_section _oaw_get_email" id="_oaw_get_email"> \
     <p><input class="_oaw_form" type="text" id="_oaw_email" placeholder="" aria-label="Enter your email" style="box-shadow:none;"></input></p> \
-    <p class="_oaw_section _oaw_oa_deposit">We\'ll use this to send you a link. By depositing, you\'re agreeing to our <span class="_oaw_terms">terms</span>.</p> \
+    <p class="_oaw_section _oaw_oa_deposit">We\'ll use this to send you a link. By depositing, you\'re agreeing to our <span class="_oaw_terms"></span>.</p> \
     <p class="_oaw_section _oaw_archivable">We\'ll only use this if something goes wrong.<br> \
-    <p class="_oaw_section _oaw_dark_deposit">We\'ll only use this to send you a link to your paper when it is in <span class="_oaw_repo">ScholarWorks</span>. By depositing, you\'re agreeing to the <span class="_oaw_terms">terms</span>.</p> \
+    <p class="_oaw_section _oaw_dark_deposit">We\'ll only use this to send you a link to your paper when it is in <span class="_oaw_repo">ScholarWorks</span>. By depositing, you\'re agreeing to the <span class="_oaw_terms"></span>.</p> \
   </div> \
   <div class="_oaw_section _oaw_archivable" id="_oaw_archivable_file"> \
     <h3>We\'ll check it\'s legal, then promote, and preserve your work</h3> \
     <p><input type="file" name="file" id="_oaw_file" class="_oaw_form"></p> \
-    <p>By depositing you\'re agreeing to the <span class="_oaw_terms">terms</span> and to license your work <span class="_oaw_licence">CC-BY</span>.</p> \
+    <p>By depositing you\'re agreeing to the <span class="_oaw_terms"></span> and to license your work <span class="_oaw_licence">CC-BY</span>.</p> \
   </div> \
   <div class="_oaw_section _oaw_oa_deposit _oaw_archivable _oaw_dark_deposit" id="_oaw_deposits"> \
     <p><a href="#" class="_oaw_deposit btn-iu _oaw_button _oaw_loading" style="min-width:140px;" id="_oaw_deposit">Deposit</a></p> \
