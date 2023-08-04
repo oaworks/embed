@@ -463,7 +463,7 @@ _oaw.prototype.loading = function(load) {
       } else if (_OA.has(el, '_oaw_find')) {
         return el.innerHTML = 'Next';
       } else if (_OA.has(el, '_oaw_confirm')) {
-        return el.innerHTML = '<b>My upload was an accepted manuscript</b>';
+        return el.innerHTML = '<strong>My upload was an accepted manuscript</strong>';
       } else {
         return el.innerHTML = 'Find ' + (this.config.say_paper ? 'paper' : 'article'); // this would only happen on instantill, as "Next" above is the default for syp
       }
@@ -942,7 +942,7 @@ _oaw.prototype.deposit = function(e) {
         }
       }, () => {
         this.loading(false);
-        _OA.show('#_oaw_error', '<p>Sorry, we were not able to deposit this paper for you. ' + this.contact() + '</p><p><a href="#" class="_oaw_restart" id="_oaw_sorry_try_again"><b>Try again</b></a></p>');
+        _OA.show('#_oaw_error', '<p>Sorry, we were not able to deposit this paper for you. ' + this.contact() + '</p><p><a href="#" class="_oaw_restart" id="_oaw_sorry_try_again"><strong>Try again</strong></a></p>');
         return this.ping('shareyourpaper_couldnt_submit_deposit');
       });
     }
@@ -1069,7 +1069,7 @@ _oaw.prototype.permissions = function(data) {
           if (this.f.metadata.journal) {
             rm += encodeURIComponent('published in "' + this.f.metadata.journal + '"');
           }
-          rm += encodeURIComponent('\n\nI would like to archive the final pdf. If that is not possible, I would like to archive the accepted manuscript. Ideally, I would like to do so immediately but will respect a reasonable embargo if requested.\n\n');
+          rm += encodeURIComponent('\n\nI would like to archive the final PDF. If that is not possible, I would like to archive the accepted manuscript. Ideally, I would like to do so immediately but will respect a reasonable embargo if requested.\n\n');
           if (this.config.repo_name) {
             rm += encodeURIComponent('I plan to deposit it into "' + this.config.repo_name + '", a not-for-profit, digital, publicly accessible repository for scholarly work created for researchers ' + (this.config.institution_name ? 'at ' + this.config.institution_name : '') + '. It helps make research available to a wider audience, get citations for the original article, and assure its long-term preservation. The deposit will include a complete citation of the published version, and a link to it.\n\n');
           }
@@ -1470,8 +1470,8 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-li
   colleagues and the public.</p> <h3>Start by entering the DOI of your paper</h3> <p>We’ll gather information \
   about your paper and find the easiest way to share it.</p> \
   <p><input class="_oaw_form" type="text" id="_oaw_input" placeholder="e.g. 10.1016/j.spmi.2019.106308" aria-label="Enter a search term" style="box-shadow:none;"></input></p> \
-  <p><a class="_oaw_find btn-iu _oaw_button _oaw_loading" href="#" id="_oaw_find" aria-label="Next" style="min-width:140px;">Next</a></p> \
-  <p><a id="_oaw_nodoi" href="mailto:help@openaccessbutton.org?subject=Help%20depositing%20my%20paper&body=Hi%2C%0D%0A%0D%0AI’d%20like%20to%20deposit%3A%0D%0A%0D%0A%3C%3CPlease%20insert%20a%20full%20citation%3E%3E%0D%0A%0D%0ACan%20you%20please%20assist%20me%3F%0D%0A%0D%0AYours%20sincerely%2C"><b>My paper doesn’t have a DOI</b></a></p> \
+  <p><button class="_oaw_find btn-iu _oaw_button _oaw_loading" id="_oaw_find" aria-label="Next" style="min-width:140px;">Next</button></p> \
+  <p><a id="_oaw_nodoi" href="mailto:help@openaccessbutton.org?subject=Help%20depositing%20my%20paper&body=Hi%2C%0D%0A%0D%0AI’d%20like%20to%20deposit%3A%0D%0A%0D%0A%3C%3CPlease%20insert%20a%20full%20citation%3E%3E%0D%0A%0D%0ACan%20you%20please%20assist%20me%3F%0D%0A%0D%0AYours%20sincerely%2C"><strong>My paper doesn’t have a DOI</strong></a></p> \
 </div> \
 <div class="_oaw_panel" id="_oaw_permissions" style="display:none;" aria-live="polite"> \
   <div class="_oaw_section _oaw_oa" id="_oaw_oa"> \
@@ -1483,7 +1483,7 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-li
   <div class="_oaw_section _oaw_permission_required" id="_oaw_permission_required"> \
     <h2>You may share your paper if you ask the journal</h2> \
     <p>Unlike most, <span class="_oaw_journal">the journal</span> requires that you ask them before you share your paper freely. Asking only takes a moment as we find out who to contact and have drafted an email for you.</p> \
-    <p><a target="_blank" id="_oaw_reviewemail" href="#" class="btn-iu _oaw_button" style="min-width:140px;" rel="noopener noreferrer">Review Email</a></p> <p><a target="_blank" id="_oaw_permissionemail" class="_oaw_restart" href="#"><b>I’ve got permission now!<span class="sr-only visually-hidden"> (opens in a new tab)</span></b></a></p> \
+    <p><a target="_blank" id="_oaw_reviewemail" href="#" class="btn-iu _oaw_button" style="min-width:140px;" rel="noopener noreferrer">Review Email</a></p> <p><a target="_blank" id="_oaw_permissionemail" class="_oaw_restart" href="#"><strong>I’ve got permission now!<span class="sr-only visually-hidden"> (opens in a new tab)</span></strong></a></p> \
     <p><a href="#" class="_oaw_restart" id="_oaw_restart"><b>Do another</b></a></p> \
   </div> \
   <div class="_oaw_section _oaw_oa_deposit" id="_oaw_oa_deposit"> \
@@ -1540,7 +1540,7 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-li
     <h2>We need an earlier version</h2> \
     <p>It looks like what you uploaded is a publisher’s PDF which your journal prohibits legally sharing.<br><br> You’re nearly done. We need the accepted version, not the PDF from the journal site.</p> \
     <p><a href="#" class="_oaw_reload btn-iu _oaw_button" id="_oaw_upload_again" style="min-width:140px;">Try uploading again</a></p> \
-    <p><a href="#" class="_oaw_confirm _oaw_loading" id="_oaw_upload_accept"><b>My upload was an accepted manuscript</b></a></p> \
+    <p><a href="#" class="_oaw_confirm _oaw_loading" id="_oaw_upload_accept"><strong>My upload was an accepted manuscript</strong></a></p> \
   </div> \
   <div class="_oaw_done" id="_oaw_check"> \
     <h2>We’ll double check your paper</h2> \
