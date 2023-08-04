@@ -1484,6 +1484,7 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-li
     <h2>You may share your paper if you ask the journal</h2> \
     <p>Unlike most, <span class="_oaw_journal">the journal</span> requires that you ask them before you share your paper freely. Asking only takes a moment as we find out who to contact and have drafted an email for you.</p> \
     <p><a target="_blank" id="_oaw_reviewemail" href="#" class="btn-iu _oaw_button" style="min-width:140px;" rel="noopener noreferrer">Review Email</a></p> <p><a target="_blank" id="_oaw_permissionemail" class="_oaw_restart" href="#"><b>I’ve got permission now!<span class="sr-only visually-hidden"> (opens in a new tab)</span></b></a></p> \
+    <p><a href="#" class="_oaw_restart" id="_oaw_restart"><b>Do another</b></a></p> \
   </div> \
   <div class="_oaw_section _oaw_oa_deposit" id="_oaw_oa_deposit"> \
     <h2>Your paper is already freely available!</h2> \
