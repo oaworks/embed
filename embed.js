@@ -1527,7 +1527,7 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-li
   </div> \
   <div class="_oaw_section _oaw_archivable" id="_oaw_archivable_file"> \
     <h3>We’ll check it’s legal, then promote, and preserve your work</h3> \
-    <p><input type="file" name="file" id="_oaw_file" class="_oaw_form"></p> \
+    <p><input type="file" name="file" id="_oaw_file" class="_oaw_form" aria-label="Upload the manuscript’s file"></p> \
     <p>By depositing, you’re agreeing to the <span class="_oaw_terms"></span>. You must also license your work <span class="_oaw_licence" style="text-transform: uppercase;">CC-BY</span>. <span class="_oaw_refs"></span></p> \
   </div> \
   <div class="_oaw_section _oaw_oa_deposit _oaw_archivable _oaw_dark_deposit" id="_oaw_deposits"> \
