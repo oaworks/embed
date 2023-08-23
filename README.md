@@ -52,7 +52,7 @@ to update the live site assets.
 
 ## To run locally 
 
-Simply create a static file containing rudimentary HTML markup (e.g. named `test.html`), place it at the root directory, and copy the following code into it, replacing text in `[brackets]` with the right information: 
+Simply create a static file containing rudimentary HTML markup (e.g. named `index.html`), place it at the root directory, and copy the following code into it, replacing text in `[brackets]` with the right information: 
 
 ```html 
 <!DOCTYPE html>
