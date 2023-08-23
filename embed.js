@@ -463,7 +463,7 @@ _oaw.prototype.loading = function(load) {
       } else if (_OA.has(el, '_oaw_find')) {
         return el.innerHTML = 'Next';
       } else if (_OA.has(el, '_oaw_confirm')) {
-        return el.innerHTML = '<b>My upload was an accepted manuscript</b>';
+        return el.innerHTML = '<strong>My upload was an accepted manuscript</strong>';
       } else {
         return el.innerHTML = 'Find ' + (this.config.say_paper ? 'paper' : 'article'); // this would only happen on instantill, as "Next" above is the default for syp
       }
@@ -843,7 +843,7 @@ _oaw.prototype.deposit = function(e) {
       return this.validate();
     } else if (this.demo === true && (this.data.doi != null) && this.data.doi.startsWith('10.1234/oab-syp-')) {
       if (this.data.doi !== '10.1234/oab-syp-confirm') { // demo successful deposit
-        info = '<p>You\'ll soon find your paper freely available in ' + (this.config.repo_name ? this.config.repo_name : 'ScholarWorks') + ', Google Scholar, Web of Science, and other popular tools.';
+        info = '<p>You’ll soon find your paper freely available in ' + (this.config.repo_name ? this.config.repo_name : 'ScholarWorks') + ', Google Scholar, Web of Science, and other popular tools.';
         info += '<h3>Your paper is now freely available at this link:</h3>';
         _OA.html('#_oaw_zenodo_embargo', info);
         _OA.set('#_oaw_zenodo_url', 'https://zenodo.org/record/3703317');
@@ -860,7 +860,7 @@ _oaw.prototype.deposit = function(e) {
         this.file = new FormData();
         this.file.append('file', fl.files[0]);
       } else if (this.file !== true) { // can be set to true when dark deposit is being followed - no file required. Or a demo may set it to true
-        _OA.show('#_oaw_error', '<p>Whoops, you need to give us a file! Check it\'s uploaded.</p>');
+        _OA.show('#_oaw_error', '<p aria-live="polite">Whoops, you need to give us a file! Check it’s uploaded.</p>');
         _OA.css('#_oaw_file', 'border-color', '#f04717');
         return;
       }
@@ -920,12 +920,12 @@ _oaw.prototype.deposit = function(e) {
             // deposit was possible, show the user a congrats page with a link to the item in zenodo
             _OA.set('#_oaw_zenodo_url', res.zenodo.url);
             if (res.embargo) {
-              info = '<p>You\'ve done your part for now. Unfortunately, ' + (this.f !== undefined && this.f.metadata !== undefined && this.f.metadata.shortname ? this.f.metadata.shortname : (this.f !== undefined && this.f.metadata !== undefined && this.f.metadata.journal ? this.f.metadata.journal : 'the journal')) + ' won\'t let us make it public until ';
+              info = '<p>You’ve done your part for now. Unfortunately, ' + (this.f !== undefined && this.f.metadata !== undefined && this.f.metadata.shortname ? this.f.metadata.shortname : (this.f !== undefined && this.f.metadata !== undefined && this.f.metadata.journal ? this.f.metadata.journal : 'the journal')) + ' won’t let us make it public until ';
               info += (new Date(res.embargo)).toLocaleString('en-GB', {year: 'numeric', month: 'long', day: 'numeric'}).replace(/(11|12|13) /, '$1th ').replace('1 ', '1st ').replace('2 ', '2nd ').replace('3 ', '3rd ').replace(/([0-9]) /, '$1th ');
-              info += '. After release, you\'ll find your paper on ' + (this.config.repo_name ? this.config.repo_name : 'ScholarWorks') + ', Google Scholar, Web of Science.</p>';
+              info += '. After release, you’ll find your paper on ' + (this.config.repo_name ? this.config.repo_name : 'ScholarWorks') + ', Google Scholar, Web of Science.</p>';
               info += '<h3>Your paper will be freely available at this link:</h3>';
             } else {
-              info = '<p>You\'ll soon find your paper freely available in ' + (this.config.repo_name ? this.config.repo_name : 'ScholarWorks') + ', Google Scholar, Web of Science, and other popular tools.';
+              info = '<p>You’ll soon find your paper freely available in ' + (this.config.repo_name ? this.config.repo_name : 'ScholarWorks') + ', Google Scholar, Web of Science, and other popular tools.';
               info += '<h3>Your paper is now freely available at this link:</h3>';
             }
             _OA.html('#_oaw_zenodo_embargo', info);
@@ -942,7 +942,7 @@ _oaw.prototype.deposit = function(e) {
         }
       }, () => {
         this.loading(false);
-        _OA.show('#_oaw_error', '<p>Sorry, we were not able to deposit this paper for you. ' + this.contact() + '</p><p><a href="#" class="_oaw_restart" id="_oaw_sorry_try_again"><b>Try again</b></a></p>');
+        _OA.show('#_oaw_error', '<p>Sorry, we were not able to deposit this paper for you. ' + this.contact() + '</p><p><a href="#" class="_oaw_restart" id="_oaw_sorry_try_again"><strong>Try again</strong></a></p>');
         return this.ping('shareyourpaper_couldnt_submit_deposit');
       });
     }
@@ -972,7 +972,7 @@ _oaw.prototype.permissions = function(data) {
       if (this.f.permissions.best_permission === undefined) this.f.permissions.best_permission = {};
       if (this.f.doi_not_in_crossref || this.f.doi_not_in_oadoi) {
         this.f = {};
-        _OA.show('#_oaw_error', '<p>Double check your DOI, that doesn\'t look right to us.</p>');
+        _OA.show('#_oaw_error', '<p>Double check your DOI, that doesn’t look right to us.</p>');
         return _OA.gebi('_oaw_input').focus();
       } else if ((this.f.metadata.crossref_type !== undefined && this.f.metadata.crossref_type !== 'journal-article' && this.f.metadata.crossref_type !== 'proceedings-article') || (this.f.metadata.type !== undefined && this.f.metadata.type !== 'journal-article' && this.f.metadata.type !== 'proceedings-article')) {
         _OA.gebi('_oaw_input').focus();
@@ -991,9 +991,9 @@ _oaw.prototype.permissions = function(data) {
         _OA.hide('._oaw_section');
         _OA.show('#_oaw_permissions');
         this.loading(false);
-        tcs = 'terms <a id="_oaw_terms" href="https://openaccessbutton.org/terms" target="_blank">[1]</a>';
+        tcs = '<a id="_oaw_terms" href="https://oa.works/policies/terms/" target="_blank" rel="noopener">OA.Works terms<span class="sr-only visually-hidden"> (opens in a new tab)</span></a>';
         if (this.config.terms) {
-          tcs += ' <a id="_oaw_config_terms" href="' + this.config.terms + '" target="_blank">[2]</a>';
+          tcs += ' and <a id="_oaw_config_terms" href="' + this.config.terms + '" target="_blank" rel="noopener noreferrer">additional terms<span class="sr-only visually-hidden"> (opens in a new tab)</span></a>';
         }
         ph = 'your.name@institution.edu';
         if ((this.config.email_domains != null) && this.config.email_domains.length) {
@@ -1022,14 +1022,18 @@ _oaw.prototype.permissions = function(data) {
           _OA.set('#_oaw_email', 'placeholder', ph);
           _OA.html('._oaw_terms', tcs);
         }
-        refs = '';
+        refs = 'View the journal’s policy: ';
         try {
           for (p in this.f.permissions.best_permission.provenance.archiving_policy) {
-            refs += ' <a id="_oaw_policy_text" target="_blank" href="' + this.f.permissions.best_permission.provenance.archiving_policy[p] + '">[' + (parseInt(p) + 1) + ']</a>';
+            refs += '<a id="_oaw_policy_text" target="_blank" href="' + this.f.permissions.best_permission.provenance.archiving_policy[p] + '" rel="noopener noreferrer">[<span class="sr-only visually-hidden">policy text #</span>' + (parseInt(p) + 1) + ']<span class="sr-only visually-hidden"> (opens in a new tab)</span></a>';
+            if ((parseInt(p)) !== this.f.permissions.best_permission.provenance.archiving_policy.length - 1) {
+              refs += ', ';
+            }
           }
+          refs += '.';
         } catch(err) {}
         _OA.html('._oaw_refs', refs);
-        paper = this.f.metadata.doi ? '<a id="_oaw_your_paper" target="_blank" href="https://doi.org/' + this.f.metadata.doi + '"><u>your paper</u></a>' : 'your paper';
+        paper = this.f.metadata.doi ? '<a id="_oaw_your_paper" target="_blank" href="https://doi.org/' + this.f.metadata.doi + '" rel="noopener noreferrer">your paper<span class="sr-only visually-hidden"> (opens in a new tab)</span></a>' : 'your paper';
         _OA.html('._oaw_your_paper', (this.f.permissions.best_permission.version === 'publishedVersion' ? 'the publisher pdf of ' : '') + paper);
         _OA.html('._oaw_journal', (this.f.metadata.shortname ? this.f.metadata.shortname : 'the journal'));
         if (this.f.url) {
@@ -1048,7 +1052,7 @@ _oaw.prototype.permissions = function(data) {
             _OA.hide('#_oaw_not_pdf');
           }
           if (typeof this.f.permissions.best_permission.licence === 'string' && this.f.permissions.best_permission.licence.startsWith('other-')) {
-            _OA.html('._oaw_licence', 'under the publisher\'s terms' + refs);
+            _OA.html('._oaw_licence', 'under the publisher’s terms' + refs);
           } else {
             _OA.html('._oaw_licence', (this.f.permissions.best_permission.licence ? this.f.permissions.best_permission.licence : 'CC-BY'));
           }
@@ -1065,7 +1069,7 @@ _oaw.prototype.permissions = function(data) {
           if (this.f.metadata.journal) {
             rm += encodeURIComponent('published in "' + this.f.metadata.journal + '"');
           }
-          rm += encodeURIComponent('\n\nI would like to archive the final pdf. If that is not possible, I would like to archive the accepted manuscript. Ideally, I would like to do so immediately but will respect a reasonable embargo if requested.\n\n');
+          rm += encodeURIComponent('\n\nI would like to archive the final PDF. If that is not possible, I would like to archive the accepted manuscript. Ideally, I would like to do so immediately but will respect a reasonable embargo if requested.\n\n');
           if (this.config.repo_name) {
             rm += encodeURIComponent('I plan to deposit it into "' + this.config.repo_name + '", a not-for-profit, digital, publicly accessible repository for scholarly work created for researchers ' + (this.config.institution_name ? 'at ' + this.config.institution_name : '') + '. It helps make research available to a wider audience, get citations for the original article, and assure its long-term preservation. The deposit will include a complete citation of the published version, and a link to it.\n\n');
           }
@@ -1073,7 +1077,7 @@ _oaw.prototype.permissions = function(data) {
           _OA.set('#_oaw_reviewemail', 'href', rm);
           // or to confirm permission has been received
           pm = 'mailto:' + (this.config.deposit_help ? this.config.deposit_help : this.cml()) + '?subject=Permission%20Given%20to%20Deposit%20' + (this.f.metadata.doi ? this.f.metadata.doi : '') + '&body=';
-          pm += encodeURIComponent('To whom it may concern,\n\nAttached is written confirmation of permission I\'ve been given to deposit, and the permitted version of my paper: ');
+          pm += encodeURIComponent('To whom it may concern,\n\nAttached is written confirmation of permission I’ve been given to deposit, and the permitted version of my paper: ');
           pm += encodeURIComponent('"' + (this.f.metadata.title ? this.f.metadata.title : (this.f.metadata.doi ? this.f.metadata.doi : 'Untitled paper')) + '" \n\nCan you please deposit it into the repository on my behalf? \n\nSincerely, ');
           _OA.set('#_oaw_permissionemail', 'href', pm);
           _OA.hide('._oaw_get_email');
@@ -1192,7 +1196,7 @@ _oaw.prototype.findings = function(data) { // only used by instantill
           _OA.show('#_oaw_oa_available');
         }
         if ((this.f.ill != null) && !((this.config.ill_if_sub_off && hassub) || (this.config.ill_if_oa_off && hasoa))) {
-          _OA.html('#_oaw_cost_time', '<p>It ' + (this.config.cost ? 'costs ' + this.config.cost : 'is free to you,') + ' and we\'ll usually email the link within ' + (this.config.time ? this.config.time : '24 hours') + '.<br></p>');
+          _OA.html('#_oaw_cost_time', '<p>It ' + (this.config.cost ? 'costs ' + this.config.cost : 'is free to you,') + ' and we’ll usually email the link within ' + (this.config.time ? this.config.time : '24 hours') + '.<br></p>');
           if (!this.data.email) {
             if (this.openurl()) {
               _OA.hide('#_oaw_collect_email');
@@ -1208,7 +1212,7 @@ _oaw.prototype.findings = function(data) { // only used by instantill
           return _OA.show('#_oaw_ask_library');
         }
       } else if (this.data.usermetadata) {
-        _OA.html('#_oaw_citation', '<h3>Unknown ' + (this.config.say_paper ? 'paper' : 'article') + '</h3><p>Sorry, we can\'t find this ' + (this.config.say_paper ? 'paper' : 'article') + ' or sufficient metadata. ' + this.contact() + '</p>');
+        _OA.html('#_oaw_citation', '<h3>Unknown ' + (this.config.say_paper ? 'paper' : 'article') + '</h3><p>Sorry, we can’t find this ' + (this.config.say_paper ? 'paper' : 'article') + ' or sufficient metadata. ' + this.contact() + '</p>');
         this.ping('shareyourpaper_unknown_article');
         return setTimeout((() => {
           return this.restart();
@@ -1294,7 +1298,7 @@ _oaw.prototype.find = function(e) {
         delete this.data.title;
         delete this.data.url;
         delete this.data.id;
-        return _OA.show('#_oaw_error', '<p>Please provide a DOI. If you\'re not sure what a DOI is, go <a id="_oaw_doi_howto" href="https://library.uic.edu/help/article/1966/what-is-a-doi-and-how-do-i-use-them-in-citations" target="_blank">here</a>.</p>');
+        return _OA.show('#_oaw_error', '<p>Please provide a DOI. If you’re not sure what DOIs are, learn about them in this article <a id="_oaw_doi_howto" href="https://library.uic.edu/help/article/1966/what-is-a-doi-and-how-do-i-use-them-in-citations" target="_blank" rel="noopener noferrer">“What is a DOI and how do I use them in citations?” <span class="sr-only visually-hidden">(opens in a new tab)</span></a>.</p>');
       } else {
         return _OA.show('#_oaw_error', '<p><span>&#10060;</span> Sorry please provide the full DOI, title, citation, PMID or PMC ID.</p>');
       }
@@ -1302,7 +1306,7 @@ _oaw.prototype.find = function(e) {
       delete this.data.doi;
       _OA.set('#_oaw_input', '');
       _OA.gebi('_oaw_input').focus();
-      return _OA.show('#_oaw_error', '<p>Please provide a DOI. If you\'re not sure what a DOI is, go <a id="_oaw_doi_howto" href="https://library.uic.edu/help/article/1966/what-is-a-doi-and-how-do-i-use-them-in-citations" target="_blank">here</a>.</p>');
+      return _OA.show('#_oaw_error', '<p>Please provide a DOI. If you’re not sure what DOIs are, learn about them in this article <a id="_oaw_doi_howto" href="https://library.uic.edu/help/article/1966/what-is-a-doi-and-how-do-i-use-them-in-citations" target="_blank" rel="noopener noferrer">“What is a DOI and how do I use them in citations?”<span class="sr-only visually-hidden"> (opens in a new tab)</span></a>.</p>');
     } else {
       this.state();
       this.loading();
@@ -1388,7 +1392,7 @@ _oaw.prototype.find = function(e) {
             return this.permissions(data);
           }
         }, () => {
-          return _OA.show('#_oaw_error', '<p>Oh dear, the service is down! We\'re aware, and working to fix the problem. ' + this.contact() + '</p>');
+          return _OA.show('#_oaw_error', '<p>Oh dear, the service is down! We’re aware, and working to fix the problem. ' + this.contact() + '</p>');
         });
       }
     }
@@ -1401,13 +1405,14 @@ _oaw.prototype.find = function(e) {
 _oaw.css = '<style>\
 ._oaw_form { display: inline-block; width: 100%; height: 34px; padding: 6px 12px; font-size: 1em; line-height: 1.428571429; color: #555555; vertical-align: middle; background-color: #ffffff; background-image: none; border: 1px solid #cccccc; border-radius: 4px; -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075); -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s; } \
 ._oaw_button { display: table-cell; height:34px; padding: 6px 3px; margin-bottom: 0; font-size: 1em; font-weight: normal; line-height: 1.428571429; text-decoration: none; text-align: center; white-space: nowrap; vertical-align: middle; cursor: pointer; background-image: none; border: 1px solid transparent; border-radius: 4px; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; -o-user-select: none; user-select: none; color: #ffffff; background-color: #428bca; border-color: #357ebd; } \
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }\
 </style>';
 
 _oaw.instantill_template = '<div class="_oaw_panel" id="_oaw_inputs"> \
   <p id="_oaw_intro"> If you need <span class="_oaw_paper">an article</span> you can request it from any library in the world through Interlibrary loan. \
   <br>Start by entering a full <span class="_oaw_paper">article</span> title, citation, or DOI:<br></p> \
   <p><input class="_oaw_form" type="text" id="_oaw_input" placeholder="e.g. World Scientists Warning of a Climate Emergency" aria-label="Enter a search term" style="box-shadow:none;"></input></p> \
-  <p><a class="_oaw_find btn-iu _oaw_button _oaw_loading" id="_oaw_find" href="#" aria-label="Search" style="min-width:140px;">Find <span class="_oaw_paper">article</span></a></p> \
+  <p><a class="_oaw_find btn-iu _oaw_button _oaw_loading" id="_oaw_find" href="#" aria-label="Find" style="min-width:140px;">Find <span class="_oaw_paper">article</span></a></p> \
   <div id="_oaw_book_or_other"></div> \
   <div id="_oaw_advanced_account_info"></div> \
 </div> \
@@ -1419,18 +1424,18 @@ _oaw.instantill_template = '<div class="_oaw_panel" id="_oaw_inputs"> \
   <p id="_oaw_wrong_paper"><a class="_oaw_wrong" href="#"><b>This is not the <span class="_oaw_paper">article</span> I searched</b></a></p> \
   <div class="_oaw_section" id="_oaw_sub_available"> \
     <h3>We have an online copy instantly available</h3> \
-    <p>You should be able to access it on the publisher\'s website.</p> <p><a target="_blank" id="_oaw_sub_url" href="#"><b>Open <span class="_oaw_paper">article</span> in a new tab</b></a></p> \
+    <p>You should be able to access it on the publisher’s website.</p> <p><a target="_blank" id="_oaw_sub_url" href="#" rel="noopener noreferrer"><b>Open <span class="_oaw_paper">article</span> in a new tab</b></a></p> \
   </div> \
   <div class="_oaw_section" id="_oaw_oa_available"> \
     <h3><br>There is a free, instantly accessible copy online</h3> \
     <p>It may not be the final published version and may lack graphs or figures making it unsuitable for citations.</p> \
-    <p><a id="_oaw_url" target="_blank" href="#"><b>Open <span class="_oaw_paper">article</span> in a new tab</b></a></p> \
+    <p><a id="_oaw_url" target="_blank" href="#" rel="noopener noreferrer"><b>Open <span class="_oaw_paper">article</span> in a new tab</b></a></p> \
   </div> \
   <div class="_oaw_section" id="_oaw_ask_library"> \
     <h3><br>Ask the library to send you a digital copy via Interlibrary Loan</h3> \
-    <div id="_oaw_cost_time"><p>It is free to you, and we\'ll usually email the link within 24 hours.<br></p></div> \
+    <div id="_oaw_cost_time"><p>It is free to you, and we’ll usually email the link within 24 hours.<br></p></div> \
     <div id="_oaw_collect_email"> \
-      <p id="_oaw_terms_note"><input type="checkbox" id="_oaw_read_terms"> I have read the <a id="_oaw_terms_link" target="_blank" href="#">terms and conditions</a></p> \
+      <p id="_oaw_terms_note"><input type="checkbox" id="_oaw_read_terms"> I have read the <a id="_oaw_terms_link" target="_blank" href="#" rel="noopener noreferrer">terms and conditions<span class="sr-only visually-hidden"> (opens in a new tab)</span></a></p> \
       <p><input placeholder="Your university email address" id="_oaw_email" type="text" class="_oaw_form"></p> \
     </div> \
     <p><a class="_oaw_submit btn-iu _oaw_button _oaw_loading" href="#" id="_oaw_submit" style="min-width:140px;">Complete request</a></p> \
@@ -1438,7 +1443,7 @@ _oaw.instantill_template = '<div class="_oaw_panel" id="_oaw_inputs"> \
   </div> \
 </div> \
 <div class="_oaw_panel" id="_oaw_metadata" style="display:none;"> \
-  <h2>Sorry we didn\'t find that!</h2> \
+  <h2>Sorry we didn’t find that!</h2> \
   <p id="_oaw_doi_not_in_crossref" style="display:none;">The DOI <span id="_oaw_bad_doi">you entered</span> does not appear in Crossref</p> \
   <p>Please provide or amend the <span class="_oaw_paper">article</span> details.</p> \
   <p><span class="_oaw_paper">Article</span> title (required)<br><input class="_oaw_form" id="_oaw_title" type="text" placeholder="e.g The State of OA: A large-scale analysis of Open Access"></p> \
@@ -1458,90 +1463,92 @@ _oaw.instantill_template = '<div class="_oaw_panel" id="_oaw_inputs"> \
 <div id="_oaw_error"></div> \
 <div id="_oaw_pilot"></div>';
 
-_oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs"> \
+_oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-live="polite"> \
   <h2>Make your research visible and see 30% more citations</h2> \
   <p><span id="_oaw_lib_info">We can help you make your paper Open Access, for free, wherever you publish. \
-  It\'s legal and takes just minutes.</span> Join millions of researchers sharing their papers freely with \
-  colleagues and the public.</p> <h3>Start by entering the DOI of your paper</h3> <p>We\'ll gather information \
+  It’s legal and takes just minutes.</span> Join millions of researchers sharing their papers freely with \
+  colleagues and the public.</p> <h3>Start by entering the DOI of your paper</h3> <p>We’ll gather information \
   about your paper and find the easiest way to share it.</p> \
   <p><input class="_oaw_form" type="text" id="_oaw_input" placeholder="e.g. 10.1016/j.spmi.2019.106308" aria-label="Enter a search term" style="box-shadow:none;"></input></p> \
-  <p><a class="_oaw_find btn-iu _oaw_button _oaw_loading" href="#" id="_oaw_find" aria-label="Search" style="min-width:140px;">Next</a></p> \
-  <p><a id="_oaw_nodoi" href="mailto:help@openaccessbutton.org?subject=Help%20depositing%20my%20paper&body=Hi%2C%0D%0A%0D%0AI\'d%20like%20to%20deposit%3A%0D%0A%0D%0A%3C%3CPlease%20insert%20a%20full%20citation%3E%3E%0D%0A%0D%0ACan%20you%20please%20assist%20me%3F%0D%0A%0D%0AYours%20sincerely%2C"><b>My paper doesn\'t have a DOI</b></a></p> \
+  <p><button class="_oaw_find btn-iu _oaw_button _oaw_loading" id="_oaw_find" aria-label="Next" style="min-width:140px;">Next</button></p> \
+  <p><a id="_oaw_nodoi" href="mailto:help@openaccessbutton.org?subject=Help%20depositing%20my%20paper&body=Hi%2C%0D%0A%0D%0AI’d%20like%20to%20deposit%3A%0D%0A%0D%0A%3C%3CPlease%20insert%20a%20full%20citation%3E%3E%0D%0A%0D%0ACan%20you%20please%20assist%20me%3F%0D%0A%0D%0AYours%20sincerely%2C"><strong>My paper doesn’t have a DOI</strong></a></p> \
 </div> \
-<div class="_oaw_panel" id="_oaw_permissions" style="display:none;"> \
+<div class="_oaw_panel" id="_oaw_permissions" style="display:none;" aria-live="polite"> \
   <div class="_oaw_section _oaw_oa" id="_oaw_oa"> \
     <h2>Your paper is already freely available!</h2> \
-    <p>Great news, you\'re already getting the benefits of sharing your work! Your publisher or co-author have already shared it.</p> \
-    <p><a target="_blank" href="#" class="_oaw_oa_url btn-iu _oaw_button" style="min-width:140px;">See free version</a></p> \
+    <p>Great news, you’re already getting the benefits of sharing your work! Your publisher or co-author have already shared it.</p> \
+    <p><a target="_blank" href="#" class="_oaw_oa_url btn-iu _oaw_button" style="min-width:140px;" rel="noopener noreferrer">See free version<span class="sr-only visually-hidden"> (opens in a new tab)</span></a></p> \
     <p><a href="#" class="_oaw_restart" id="_oaw_restart"><b>Do another</b></a></p> \
   </div> \
   <div class="_oaw_section _oaw_permission_required" id="_oaw_permission_required"> \
     <h2>You may share your paper if you ask the journal</h2> \
     <p>Unlike most, <span class="_oaw_journal">the journal</span> requires that you ask them before you share your paper freely. Asking only takes a moment as we find out who to contact and have drafted an email for you.</p> \
-    <p><a target="_blank" id="_oaw_reviewemail" href="#" class="btn-iu _oaw_button" style="min-width:140px;">Review Email</a></p> <p><a target="_blank" id="_oaw_permissionemail" class="_oaw_restart" href="#"><b>I\'ve got permission now!</b></a></p> \
+    <p><a target="_blank" id="_oaw_reviewemail" href="#" class="btn-iu _oaw_button" style="min-width:140px;" rel="noopener noreferrer">Review Email</a></p> <p><a target="_blank" id="_oaw_permissionemail" class="_oaw_restart" href="#"><strong>I’ve got permission now!<span class="sr-only visually-hidden"> (opens in a new tab)</span></strong></a></p> \
+    <p><a href="#" class="_oaw_restart" id="_oaw_restart"><b>Do another</b></a></p> \
   </div> \
   <div class="_oaw_section _oaw_oa_deposit" id="_oaw_oa_deposit"> \
     <h2>Your paper is already freely available!</h2> \
-    <p>Great news, you\'re already getting the benefits of sharing your work! Your publisher or co-author have already shared a <a class="_oaw_oa_url" id="_oaw_goto_oa_url" target="_blank" href="#">freely available copy</a>.</p> \
+    <p>Great news, you’re already getting the benefits of sharing your work! Your publisher or co-author have already shared a <a class="_oaw_oa_url" id="_oaw_goto_oa_url" target="_blank" href="#" rel="noopener noreferrer">freely available copy<span class="sr-only visually-hidden"> (opens in a new tab)</span></a>.</p> \
     <h3 class="_oaw_section _oaw_get_email">Please enter your email to confirm deposit</h3> \
   </div> \
   <div class="_oaw_section _oaw_archivable" id="_oaw_archivable"> \
     <h2>You can freely share your paper!</h2> \
-    <p><span class="_oaw_library">The library has</span> checked and <span class="_oaw_journal">the journal</span> encourages you to freely share <span class="_oaw_your_paper">your paper</span> so colleagues and the public can freely read and cite it. <span class="_oaw_refs"></span></p> \
+    <p><span class="_oaw_library">The library has</span> checked and <span class="_oaw_journal">the journal</span> encourages you to freely share <span class="_oaw_your_paper">your paper</span> so colleagues and the public can freely read and cite it.</p> \
     <div id="_oaw_not_pdf"> \
-      <h3><span>&#10003;</span> Find the manuscript the journal accepted. It\'s not a PDF from the journal site</h3> \
-      <p>This is the only version you\'re able to share under copyright. The accepted manuscript is the word file or Latex export you sent the publisher after peer-review and before formatting (publisher proofs).</p> \
-      <h3><span>&#10003;</span> Check there aren\'t publisher logos or formatting</h3> \
-      <p>It\'s normal to share accepted manuscripts as the research is the same. It\'s fine to save your file as a pdf, make small edits to formatting, fix typos, remove comments, and arrange figures.</p> \
+      <h3><span aria-hidden="true">&#10003;</span> Find the manuscript the journal accepted. It’s not a PDF from the journal site</h3> \
+      <p>This is the only version you’re able to share under copyright. The accepted manuscript is the word file or Latex export you sent the publisher after peer-review and before formatting (publisher proofs).</p> \
+      <h3><span aria-hidden="true">&#10003;</span> Check there aren’t publisher logos or formatting</h3> \
+      <p>It’s normal to share accepted manuscripts as the research is the same. It’s fine to save your file as a pdf, make small edits to formatting, fix typos, remove comments, and arrange figures.</p> \
     </div> \
-    <h3 class="_oaw_section _oaw_get_email"><span>&#10003;</span> Tell us your email</h3> \
+    <h3 class="_oaw_section _oaw_get_email"><span aria-hidden="true">&#10003;</span> Tell us your email</h3> \
   </div> \
   <!-- <div class="_oaw_section _oaw_bronze_archivable" id="_oaw_bronze_archivable"> \
     <h2>Keep your paper freely available!</h2> \
-    <p>For now, <span class="_oaw_journal">the journal</span> is sharing <span class="_oaw_your_paper">your paper</span> for free, but that might change. You can do the following to ensure colleagues and the public can always freely read and cite it <span class="_oaw_refs"></span>.</p> \
+    <p>For now, <span class="_oaw_journal">the journal</span> is sharing <span class="_oaw_your_paper">your paper</span> for free, but that might change. You can do the following to ensure colleagues and the public can always freely read and cite it.</p> \
     <div id="_oaw_not_pdf"> \
-      <h3><span>&#10003;</span> Find the manuscript the journal accepted. It\'s not a PDF from the journal site</h3> \
-      <p>This is the only version you\'re able to share under copyright. The accepted manuscript is the word file or Latex export you sent the publisher after peer-review and before formatting (publisher proofs).</p> \
-      <h3><span>&#10003;</span> Check there aren\'t publisher logos or formatting</h3> \
-      <p>It\'s normal to share accepted manuscripts as the research is the same. It\'s fine to save your file as a pdf, make small edits to formatting, fix typos, remove comments, and arrange figures.</p> \
+      <h3><span aria-hidden="true">&#10003;</span> Find the manuscript the journal accepted. It’s not a PDF from the journal site</h3> \
+      <p>This is the only version you’re able to share under copyright. The accepted manuscript is the word file or Latex export you sent the publisher after peer-review and before formatting (publisher proofs).</p> \
+      <h3><span aria-hidden="true">&#10003;</span> Check there aren’t publisher logos or formatting</h3> \
+      <p>It’s normal to share accepted manuscripts as the research is the same. It’s fine to save your file as a pdf, make small edits to formatting, fix typos, remove comments, and arrange figures.</p> \
     </div> \
-    <h3 class="_oaw_section _oaw_get_email"><span>&#10003;</span> Tell us your email</h3> \
+    <h3 class="_oaw_section _oaw_get_email"><span aria-hidden="true">&#10003;</span> Tell us your email</h3> \
   </div> --> \
   <div class="_oaw_section _oaw_dark_deposit" id="_oaw_dark_deposit"> \
     <h2>You can share your paper on request!</h2> \
-    <p>We checked and unfortunately <span class="_oaw_journal">the journal</span> won\'t let you share <span class="_oaw_your_paper">your paper</span> freely with everyone. <span class="_oaw_refs"></span><br><br> The good news is the library can still legally make your paper much easier to find and access. We\'ll put the publisher PDF in <span class="_oaw_repo">ScholarWorks</span> and then share it on your behalf whenever it is requested.</p> \
+    <p>We checked and unfortunately <span class="_oaw_journal">the journal</span> won’t let you share <span class="_oaw_your_paper">your paper</span> freely with everyone.</p>\
+    <p> The good news is the library can still legally make your paper much easier to find and access. We’ll put the publisher PDF in <span class="_oaw_repo">ScholarWorks</span> and then share it on your behalf whenever it is requested.</p> \
     <h3 class="_oaw_section _oaw_get_email">All we need is your email</h3> \
   </div> \
   <div class="_oaw_section _oaw_get_email" id="_oaw_get_email"> \
     <p><input class="_oaw_form" type="text" id="_oaw_email" placeholder="" aria-label="Enter your email" style="box-shadow:none;"></input></p> \
-    <p class="_oaw_section _oaw_oa_deposit">We\'ll use this to send you a link. By depositing, you\'re agreeing to our <span class="_oaw_terms">terms</span>.</p> \
-    <p class="_oaw_section _oaw_archivable">We\'ll only use this if something goes wrong.<br> \
-    <p class="_oaw_section _oaw_dark_deposit">We\'ll only use this to send you a link to your paper when it is in <span class="_oaw_repo">ScholarWorks</span>. By depositing, you\'re agreeing to the <span class="_oaw_terms">terms</span>.</p> \
+    <p class="_oaw_section _oaw_oa_deposit">We’ll use this to send you a link. By depositing, you’re agreeing to our <span class="_oaw_terms"></span>.</p> \
+    <p class="_oaw_section _oaw_archivable">We’ll only use this if something goes wrong.<br> \
+    <p class="_oaw_section _oaw_dark_deposit">We’ll only use this to send you a link to your paper when it is in <span class="_oaw_repo">ScholarWorks</span>. By depositing, you’re agreeing to the <span class="_oaw_terms"></span>. </p> \
   </div> \
   <div class="_oaw_section _oaw_archivable" id="_oaw_archivable_file"> \
-    <h3>We\'ll check it\'s legal, then promote, and preserve your work</h3> \
-    <p><input type="file" name="file" id="_oaw_file" class="_oaw_form"></p> \
-    <p>By depositing you\'re agreeing to the <span class="_oaw_terms">terms</span> and to license your work <span class="_oaw_licence">CC-BY</span>.</p> \
+    <h3>We’ll check it’s legal, then promote, and preserve your work</h3> \
+    <p><input type="file" name="file" id="_oaw_file" class="_oaw_form" aria-label="Upload the manuscript’s file"></p> \
+    <p>By depositing, you’re agreeing to the <span class="_oaw_terms"></span>. You must also license your work <span class="_oaw_licence" style="text-transform: uppercase;">CC-BY</span>. <span class="_oaw_refs"></span></p> \
   </div> \
   <div class="_oaw_section _oaw_oa_deposit _oaw_archivable _oaw_dark_deposit" id="_oaw_deposits"> \
     <p><a href="#" class="_oaw_deposit btn-iu _oaw_button _oaw_loading" style="min-width:140px;" id="_oaw_deposit">Deposit</a></p> \
     <p><a href="#" class="_oaw_restart" id="_oaw_deposits_restart"><b>Do another</b></a></p> \
   </div> \
 </div> \
-<div class="_oaw_panel" id="_oaw_done" style="display:none;"> \
+<div class="_oaw_panel" id="_oaw_done" style="display:none;" aria-live="polite"> \
   <div class="_oaw_done" id="_oaw_confirm"> \
     <h2>We need an earlier version</h2> \
-    <p>It looks like what you uploaded is a publisher\'s PDF which your journal prohibits legally sharing.<br><br> You\'re nearly done. We need the accepted version, not the PDF from the journal site.</p> \
+    <p>It looks like what you uploaded is a publisher’s PDF which your journal prohibits legally sharing.<br><br> You’re nearly done. We need the accepted version, not the PDF from the journal site.</p> \
     <p><a href="#" class="_oaw_reload btn-iu _oaw_button" id="_oaw_upload_again" style="min-width:140px;">Try uploading again</a></p> \
-    <p><a href="#" class="_oaw_confirm _oaw_loading" id="_oaw_upload_accept"><b>My upload was an accepted manuscript</b></a></p> \
+    <p><a href="#" class="_oaw_confirm _oaw_loading" id="_oaw_upload_accept"><strong>My upload was an accepted manuscript</strong></a></p> \
   </div> \
   <div class="_oaw_done" id="_oaw_check"> \
-    <h2>We\'ll double check your paper</h2> \
-    <p>You\'ve done your part for now. Hopefully, we\'ll send you a link soon. First, we\'ll check to make sure it\'s legal to share.</p> \
+    <h2>We’ll double check your paper</h2> \
+    <p>You’ve done your part for now. Hopefully, we’ll send you a link soon. First, we’ll check to make sure it’s legal to share.</p> \
   </div> \
   <div class="_oaw_done" id="_oaw_partial"> \
-    <h2>Congrats, you\'re done!</h2> \
-    <p>Check back soon to see your paper live, or we\'ll email you with issues.</p> \
+    <h2>Congrats, you’re done!</h2> \
+    <p>Check back soon to see your paper live, or we’ll email you with issues.</p> \
   </div> \
   <div class="_oaw_done" id="_oaw_zenodo"> \
     <h2>Congrats! Your paper will be available to everyone, forever!</h2> \
@@ -1550,16 +1557,16 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs"> \
     <p>You can now put the link on your website, CV, any profiles, and ResearchGate.</p> \
   </div> \
   <div class="_oaw_done" id="_oaw_redeposit"> \
-    <h2>Congrats, you\'re done!</h2> \
-    <p>Check back soon to see your paper live, or we\'ll email you with issues.</p> \
+    <h2>Congrats, you’re done!</h2> \
+    <p>Check back soon to see your paper live, or we’ll email you with issues.</p> \
   </div> \
   <div class="_oaw_done" id="_oaw_success"> \
-    <h2>Hurray, you\'re done!</h2> \
-    <p>We\'ll email you a link to your paper in <span class="_oaw_repo">ScholarWorks</span> soon. Next time, before you publish check to see if your journal allows you to have the most impact by making your research available to everyone, for free.</p> \
+    <h2>Hurray, you’re done!</h2> \
+    <p>We’ll email you a link to your paper in <span class="_oaw_repo">ScholarWorks</span> soon. Next time, before you publish check to see if your journal allows you to have the most impact by making your research available to everyone, for free.</p> \
   </div> \
   <div class="_oaw_done" id="_oaw_review"> \
-    <h2>You\'ve done your part</h2> \
-    <p>All that\'s left to do is wait. Once the journal gives you permission to share, come back and we\'ll help you finish the job.</p> \
+    <h2>You’ve done your part</h2> \
+    <p>All that’s left to do is wait. Once the journal gives you permission to share, come back and we’ll help you finish the job.</p> \
   </div> \
   <p><a href="#" class="_oaw_restart btn-iu _oaw_button" id="_oaw_done_restart" style="min-width:140px;">Do another</a></p> \
 </div> \
@@ -1701,12 +1708,12 @@ _oaw.prototype.configure = function(key, val, build, preview) {
           }
         });
         if (this.config.pilot) {
-          pilot = '<p><br>Notice a change? We\'re testing a simpler and faster way to ' + (this.plugin === 'instantill' ? 'get' : 'deposit') + ' your ' + (this.config.say_paper ? 'paper' : 'article') + (this.plugin === 'instantill' ? '' : 's') + '. You can ';
+          pilot = '<p><br>Notice a change? We’re testing a simpler and faster way to ' + (this.plugin === 'instantill' ? 'get' : 'deposit') + ' your ' + (this.config.say_paper ? 'paper' : 'article') + (this.plugin === 'instantill' ? '' : 's') + '. You can ';
           pilot += '<a href="mailto:' + this.cml() + '">give feedback</a> or ';
           if (this.plugin === 'instantill') {
-            pilot += '<a class="_oaw_ping" message="instantill_use_the_old_form" target="_blank" href="' + (this.config.advanced_ill_form ? this.config.advanced_ill_form : this.config.ill_form ? this.config.ill_form : 'mailto:' + this.cml()) + '">use the old form</a>.</p>';
+            pilot += '<a class="_oaw_ping" message="instantill_use_the_old_form" target="_blank" href="' + (this.config.advanced_ill_form ? this.config.advanced_ill_form : this.config.ill_form ? this.config.ill_form : 'mailto:' + this.cml()) + '" rel="noopener noreferrer">use the old form<span class="sr-only visually-hidden"> (opens in a new tab)</span></a>.</p>';
           } else {
-            pilot += '<a class="_oaw_ping" message="shareyourpaper_use_the_old_form" target="_blank" href="' + (this.config.old_way ? (this.config.old_way.includes('@') ? 'mailto:' : '') + this.config.old_way : 'mailto:' + this.cml()) + '">use the old way</a>.</p>';
+            pilot += '<a class="_oaw_ping" message="shareyourpaper_use_the_old_form" target="_blank" href="' + (this.config.old_way ? (this.config.old_way.includes('@') ? 'mailto:' : '') + this.config.old_way : 'mailto:' + this.cml()) + '" rel="noopener noreferrer">use the old way<span class="sr-only visually-hidden"> (opens in a new tab)</span></a>.</p>';
           }
           _OA.html('#_oaw_pilot', pilot);
         } else {
