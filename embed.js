@@ -1412,7 +1412,7 @@ _oaw.instantill_template = '<div class="_oaw_panel" id="_oaw_inputs"> \
   <p id="_oaw_intro"> If you need <span class="_oaw_paper">an article</span> you can request it from any library in the world through Interlibrary loan. \
   <br>Start by entering a full <span class="_oaw_paper">article</span> title, citation, or DOI:<br></p> \
   <p><input class="_oaw_form" type="text" id="_oaw_input" placeholder="e.g. World Scientists Warning of a Climate Emergency" aria-label="Enter a search term" style="box-shadow:none;"></input></p> \
-  <p><a class="_oaw_find btn-iu _oaw_button _oaw_loading" id="_oaw_find" href="#" aria-label="Find" style="min-width:140px;">Find <span class="_oaw_paper">article</span></a></p> \
+  <p><a class="_oaw_find btn-iu _oaw_button _oaw_loading" id="_oaw_find" href="#" aria-label="Find article" style="min-width:140px;">Find <span class="_oaw_paper">article</span></a></p> \
   <div id="_oaw_book_or_other"></div> \
   <div id="_oaw_advanced_account_info"></div> \
 </div> \
