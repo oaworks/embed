@@ -1121,6 +1121,7 @@ _oaw.prototype.findings = function(data) { // only used by instantill
       }
       _OA.hide('._oaw_panel');
       _OA.hide('._oaw_section');
+      if (this.f.ill === undefined) this.f.ill = {};
       if (this.config.resolver) {
         // new setting to act as a link resolver, try to pass through immediately if sub url, OA url, or lib openurl are available
         // TODO confirm if this should send an ILL to the backend first, as a record, or maybe just a pinger
@@ -1139,7 +1140,6 @@ _oaw.prototype.findings = function(data) { // only used by instantill
         if (this.config.live) {
           data.live = this.config.live;
         }
-        if (this.f.ill === undefined) this.f.ill = {};
         if (this.f.ill.subscription === undefined) this.f.ill.subscription = {};
         if (this.f.ill.subscription.url) {
           data.resolved = 'subscription';
@@ -1158,7 +1158,7 @@ _oaw.prototype.findings = function(data) { // only used by instantill
         }
       }
       _OA.show('#_oaw_findings');
-      if (this.f.ill.error !== undefined) {
+      if (this.f.ill && this.f.ill.error !== undefined) {
         _OA.show('#_oaw_error', '<p>Please note, we encountered errors querying the following subscription services: ' + this.f.ill.error.join(', ') + '</p>');
       }
       if (this.f.metadata.title && (this.f.metadata.journal || this.data.usermetadata)) {
@@ -1195,6 +1195,7 @@ _oaw.prototype.findings = function(data) { // only used by instantill
           _OA.set('#_oaw_url', 'href', this.f.url);
           _OA.show('#_oaw_oa_available');
         }
+        if (this.f.ill && JSON.stringify(this.f.ill) == '{}') { this.f.ill = null; }
         if ((this.f.ill != null) && !((this.config.ill_if_sub_off && hassub) || (this.config.ill_if_oa_off && hasoa))) {
           _OA.html('#_oaw_cost_time', '<p>It ' + (this.config.cost ? 'costs ' + this.config.cost : 'is free to you,') + ' and we’ll usually email the link within ' + (this.config.time ? this.config.time : '24 hours') + '.<br></p>');
           if (!this.data.email) {
