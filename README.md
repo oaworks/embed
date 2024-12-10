@@ -40,15 +40,15 @@ https://dev.shareyourpaper.org
 ## To deploy
 
 Make changes in the develop branch. Once complete, commit the changes. 
-SSH to the old (dev.)openaccessbutton.org server (ask sysadmin how to do this) 
-and find the dev/oaworks/embed folder, and git pull. The embed itself 
-is served through the website domain so switch to the dev/oaworks/website 
-folder and run the node build.js command. This will rebuild the website and 
-assets, including the embed via a symlink.
 
-To deploy live, go to the live/oaworks/embed folder and git pull, git merge 
-origin/develop, git push. Then go to live/oaworks/website and node build.js 
-to update the live site assets.
+The embed itself is served through the website domain, and the website can be automatically updated
+via githooks. These hooks will pull the website code and the embed code, then rebuild the website and 
+assets, including the embed via a symlink. So to trigger this, clone the oaworks/website repo, switch to 
+develop branch, and add a line to the file at static/triggers.md. Commit the change, which will trigger 
+the hook.
+
+To deploy live, follow the same process on the main/master branches.
+
 
 ## To run locally 
 
