@@ -1056,7 +1056,7 @@ _oaw.prototype.permissions = function(data) {
           } else {
             _OA.html('._oaw_licence', (this.f.permissions.best_permission.licence ? this.f.permissions.best_permission.licence : 'CC-BY'));
           }
-          if (this.f.url && this.f.permissions.best_permission.version != 'publishedVersion' && (!this.f.permissions.best_permission.licence || !this.f.permissions.best_permission.licence.toLowerCase().includes('cc'))) {
+          if (this.f.url && this.f.permissions.best_permission.version != 'publishedVersion' && (!this.f.permissions.best_permission.licence || this.f.permissions.best_permission.licence.toLowerCase().includes('cc'))) {
             return _OA.show('._oaw_bronze_archivable');
           } else {
             return _OA.show('._oaw_archivable');
