@@ -955,7 +955,7 @@ _oaw.prototype.permissions = function(data) {
   // only used by shareyourpaper
   // requests the permissions for a particular article identified by DOI from the API
   // then shows suitable next steps on screen
-  var nj, p, paper, ph, pm, refs, rm, tcs;
+  var nj, p, paper, bronze_archivable, ph, pm, refs, rm, tcs;
   try {
     if (data != null) {
       this.f = data;
@@ -1036,8 +1036,10 @@ _oaw.prototype.permissions = function(data) {
         paper = this.f.metadata.doi ? '<a id="_oaw_your_paper" target="_blank" href="https://doi.org/' + this.f.metadata.doi + '" rel="noopener noreferrer">your paper<span class="sr-only visually-hidden"> (opens in a new tab)</span></a>' : 'your paper';
         _OA.html('._oaw_your_paper', (this.f.permissions.best_permission.version === 'publishedVersion' ? 'the publisher pdf of ' : '') + paper);
         _OA.html('._oaw_journal', (this.f.metadata.shortname ? this.f.metadata.shortname : 'the journal'));
-        if (this.f.url) {
-          // it is already OA, depending on settings can deposit another copy
+
+        bronze_archivable = this.f.url && this.f.permissions.best_permission.version != 'publishedVersion' && (!this.f.permissions.best_permission.licence || this.f.permissions.best_permission.licence.toLowerCase().includes('cc'))
+        if (this.f.url && !bronze_archivable) {
+          // it is already OA and not bronze archivable, depending on settings can deposit another copy
           _OA.set('._oaw_oa_url', 'href', this.f.url);
           if (this.config.oa_deposit_off) {
             _OA.hide('._oaw_get_email');
@@ -1056,7 +1058,7 @@ _oaw.prototype.permissions = function(data) {
           } else {
             _OA.html('._oaw_licence', (this.f.permissions.best_permission.licence ? this.f.permissions.best_permission.licence : 'CC-BY'));
           }
-          if (this.f.url && this.f.permissions.best_permission.version != 'publishedVersion' && (!this.f.permissions.best_permission.licence || this.f.permissions.best_permission.licence.toLowerCase().includes('cc'))) {
+          if (bronze_archivable) {
             return _OA.show('._oaw_bronze_archivable');
           } else {
             return _OA.show('._oaw_archivable');
