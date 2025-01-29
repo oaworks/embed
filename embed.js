@@ -1051,7 +1051,7 @@ _oaw.prototype.permissions = function(data) {
         } else if (this.f.permissions.best_permission.can_archive) {
           if (this.f.permissions.best_permission.version === 'publishedVersion') {
             // can be shared, depending on permissions info
-            _OA.hide('#_oaw_not_pdf');
+            _OA.hide('._oaw_not_pdf');
           }
           if (typeof this.f.permissions.best_permission.licence === 'string' && this.f.permissions.best_permission.licence.startsWith('other-')) {
             _OA.html('._oaw_licence', 'under the publisher’s terms' + refs);
@@ -1501,7 +1501,7 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-li
   <div class="_oaw_section _oaw_archivable" id="_oaw_archivable"> \
     <h2>You can freely share your paper!</h2> \
     <p><span class="_oaw_library">The library has</span> checked and <span class="_oaw_journal">the journal</span> encourages you to freely share <span class="_oaw_your_paper">your paper</span> so colleagues and the public can freely read and cite it.</p> \
-    <div id="_oaw_not_pdf"> \
+    <div id="_oaw_not_pdf" class="_oaw_not_pdf"> \
       <h3><span aria-hidden="true">&#10003;</span> Find the manuscript the journal accepted. It’s not a PDF from the journal site</h3> \
       <p>This is the only version you’re able to share under copyright. The accepted manuscript is the word file or Latex export you sent the publisher after peer-review and before formatting (publisher proofs).</p> \
       <h3><span aria-hidden="true">&#10003;</span> Check there aren’t publisher logos or formatting</h3> \
@@ -1512,7 +1512,7 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-li
   <div class="_oaw_section _oaw_bronze_archivable" id="_oaw_bronze_archivable"> \
     <h2>Keep your paper freely available!</h2> \
     <p>For now, <span class="_oaw_journal">the journal</span> is sharing <span class="_oaw_your_paper">your paper</span> for free, but that might change. You can do the following to ensure colleagues and the public can always freely read and cite it.</p> \
-    <div id="_oaw_not_pdf"> \
+    <div id="_oaw_not_pdf_bronze" class="_oaw_not_pdf"> \
       <h3><span aria-hidden="true">&#10003;</span> Find the manuscript the journal accepted. It’s not a PDF from the journal site</h3> \
       <p>This is the only version you’re able to share under copyright. The accepted manuscript is the word file or Latex export you sent the publisher after peer-review and before formatting (publisher proofs).</p> \
       <h3><span aria-hidden="true">&#10003;</span> Check there aren’t publisher logos or formatting</h3> \
