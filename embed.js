@@ -883,7 +883,7 @@ _oaw.prototype.deposit = function(e) {
       if (this.data.confirmed) {
         data.confirmed = this.data.confirmed;
       }
-      if (this.f !== undefined && typeof this.f.url === 'string') {
+      if (this.f !== undefined && typeof this.f.url === 'string' && !this.is_bronze_archivable) {
         data.redeposit = this.f.url;
       }
       if (this.config.pilot) {
@@ -955,7 +955,8 @@ _oaw.prototype.permissions = function(data) {
   // only used by shareyourpaper
   // requests the permissions for a particular article identified by DOI from the API
   // then shows suitable next steps on screen
-  var nj, p, paper, bronze_archivable, ph, pm, refs, rm, tcs;
+  var nj, p, paper, ph, pm, refs, rm, tcs;
+  this.is_bronze_archivable = false;
   try {
     if (data != null) {
       this.f = data;
@@ -1037,8 +1038,8 @@ _oaw.prototype.permissions = function(data) {
         _OA.html('._oaw_your_paper', (this.f.permissions.best_permission.version === 'publishedVersion' ? 'the publisher pdf of ' : '') + paper);
         _OA.html('._oaw_journal', (this.f.metadata.shortname ? this.f.metadata.shortname : 'the journal'));
 
-        bronze_archivable = this.f.url && this.f.permissions.best_permission.version != 'publishedVersion' && (!this.f.permissions.best_permission.licence || this.f.permissions.best_permission.licence.toLowerCase().includes('cc'))
-        if (this.f.url && !bronze_archivable) {
+        this.is_bronze_archivable = this.f.url && this.f.permissions.best_permission.version != 'publishedVersion' && (!this.f.permissions.best_permission.licence || this.f.permissions.best_permission.licence.toLowerCase().includes('cc'))
+        if (this.f.url && !this.is_bronze_archivable) {
           // it is already OA and not bronze archivable, depending on settings can deposit another copy
           _OA.set('._oaw_oa_url', 'href', this.f.url);
           if (this.config.oa_deposit_off) {
@@ -1058,7 +1059,7 @@ _oaw.prototype.permissions = function(data) {
           } else {
             _OA.html('._oaw_licence', (this.f.permissions.best_permission.licence ? this.f.permissions.best_permission.licence : 'CC-BY'));
           }
-          if (bronze_archivable) {
+          if (this.is_bronze_archivable) {
             return _OA.show('._oaw_bronze_archivable');
           } else {
             return _OA.show('._oaw_archivable');
