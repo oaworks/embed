@@ -883,7 +883,7 @@ _oaw.prototype.deposit = function(e) {
       if (this.data.confirmed) {
         data.confirmed = this.data.confirmed;
       }
-      if (this.f !== undefined && typeof this.f.url === 'string') {
+      if (this.f !== undefined && typeof this.f.url === 'string' && !this.is_bronze_archivable) {
         data.redeposit = this.f.url;
       }
       if (this.config.pilot) {
@@ -956,6 +956,7 @@ _oaw.prototype.permissions = function(data) {
   // requests the permissions for a particular article identified by DOI from the API
   // then shows suitable next steps on screen
   var nj, p, paper, ph, pm, refs, rm, tcs;
+  this.is_bronze_archivable = false;
   try {
     if (data != null) {
       this.f = data;
@@ -1036,8 +1037,10 @@ _oaw.prototype.permissions = function(data) {
         paper = this.f.metadata.doi ? '<a id="_oaw_your_paper" target="_blank" href="https://doi.org/' + this.f.metadata.doi + '" rel="noopener noreferrer">your paper<span class="sr-only visually-hidden"> (opens in a new tab)</span></a>' : 'your paper';
         _OA.html('._oaw_your_paper', (this.f.permissions.best_permission.version === 'publishedVersion' ? 'the publisher pdf of ' : '') + paper);
         _OA.html('._oaw_journal', (this.f.metadata.shortname ? this.f.metadata.shortname : 'the journal'));
-        if (this.f.url) {
-          // it is already OA, depending on settings can deposit another copy
+
+        this.is_bronze_archivable = this.f.url && this.f.permissions.best_permission.version != 'publishedVersion' && (!this.f.permissions.best_permission.licence || this.f.permissions.best_permission.licence.toLowerCase().includes('cc'))
+        if (this.f.url && !this.is_bronze_archivable) {
+          // it is already OA and not bronze archivable, depending on settings can deposit another copy
           _OA.set('._oaw_oa_url', 'href', this.f.url);
           if (this.config.oa_deposit_off) {
             _OA.hide('._oaw_get_email');
@@ -1049,14 +1052,18 @@ _oaw.prototype.permissions = function(data) {
         } else if (this.f.permissions.best_permission.can_archive) {
           if (this.f.permissions.best_permission.version === 'publishedVersion') {
             // can be shared, depending on permissions info
-            _OA.hide('#_oaw_not_pdf');
+            _OA.hide('._oaw_not_pdf');
           }
           if (typeof this.f.permissions.best_permission.licence === 'string' && this.f.permissions.best_permission.licence.startsWith('other-')) {
             _OA.html('._oaw_licence', 'under the publisher’s terms' + refs);
           } else {
             _OA.html('._oaw_licence', (this.f.permissions.best_permission.licence ? this.f.permissions.best_permission.licence : 'CC-BY'));
           }
-          return _OA.show('._oaw_archivable');
+          if (this.is_bronze_archivable) {
+            return _OA.show('._oaw_bronze_archivable');
+          } else {
+            return _OA.show('._oaw_archivable');
+          }
         } else if (this.config.dark_deposit_off) {
           // permission must be requested first
           rm = 'mailto:' + (this.f.permissions.best_permission.permissions_contact ? this.f.permissions.best_permission.permissions_contact : (this.config.deposit_help ? this.config.deposit_help : this.cml())) + '?';
@@ -1495,7 +1502,7 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-li
   <div class="_oaw_section _oaw_archivable" id="_oaw_archivable"> \
     <h2>You can freely share your paper!</h2> \
     <p><span class="_oaw_library">The library has</span> checked and <span class="_oaw_journal">the journal</span> encourages you to freely share <span class="_oaw_your_paper">your paper</span> so colleagues and the public can freely read and cite it.</p> \
-    <div id="_oaw_not_pdf"> \
+    <div id="_oaw_not_pdf" class="_oaw_not_pdf"> \
       <h3><span aria-hidden="true">&#10003;</span> Find the manuscript the journal accepted. It’s not a PDF from the journal site</h3> \
       <p>This is the only version you’re able to share under copyright. The accepted manuscript is the word file or Latex export you sent the publisher after peer-review and before formatting (publisher proofs).</p> \
       <h3><span aria-hidden="true">&#10003;</span> Check there aren’t publisher logos or formatting</h3> \
@@ -1503,17 +1510,17 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-li
     </div> \
     <h3 class="_oaw_section _oaw_get_email"><span aria-hidden="true">&#10003;</span> Tell us your email</h3> \
   </div> \
-  <!-- <div class="_oaw_section _oaw_bronze_archivable" id="_oaw_bronze_archivable"> \
+  <div class="_oaw_section _oaw_bronze_archivable" id="_oaw_bronze_archivable"> \
     <h2>Keep your paper freely available!</h2> \
     <p>For now, <span class="_oaw_journal">the journal</span> is sharing <span class="_oaw_your_paper">your paper</span> for free, but that might change. You can do the following to ensure colleagues and the public can always freely read and cite it.</p> \
-    <div id="_oaw_not_pdf"> \
+    <div id="_oaw_not_pdf_bronze" class="_oaw_not_pdf"> \
       <h3><span aria-hidden="true">&#10003;</span> Find the manuscript the journal accepted. It’s not a PDF from the journal site</h3> \
       <p>This is the only version you’re able to share under copyright. The accepted manuscript is the word file or Latex export you sent the publisher after peer-review and before formatting (publisher proofs).</p> \
       <h3><span aria-hidden="true">&#10003;</span> Check there aren’t publisher logos or formatting</h3> \
       <p>It’s normal to share accepted manuscripts as the research is the same. It’s fine to save your file as a pdf, make small edits to formatting, fix typos, remove comments, and arrange figures.</p> \
     </div> \
     <h3 class="_oaw_section _oaw_get_email"><span aria-hidden="true">&#10003;</span> Tell us your email</h3> \
-  </div> --> \
+  </div> \
   <div class="_oaw_section _oaw_dark_deposit" id="_oaw_dark_deposit"> \
     <h2>You can share your paper on request!</h2> \
     <p>We checked and unfortunately <span class="_oaw_journal">the journal</span> won’t let you share <span class="_oaw_your_paper">your paper</span> freely with everyone.</p>\
@@ -1523,15 +1530,15 @@ _oaw.shareyourpaper_template = '<div class="_oaw_panel" id="_oaw_inputs" aria-li
   <div class="_oaw_section _oaw_get_email" id="_oaw_get_email"> \
     <p><input class="_oaw_form" type="text" id="_oaw_email" placeholder="" aria-label="Enter your email" style="box-shadow:none;"></input></p> \
     <p class="_oaw_section _oaw_oa_deposit">We’ll use this to send you a link. By depositing, you’re agreeing to our <span class="_oaw_terms"></span>.</p> \
-    <p class="_oaw_section _oaw_archivable">We’ll only use this if something goes wrong.<br> \
+    <p class="_oaw_section _oaw_archivable _oaw_bronze_archivable">We’ll only use this if something goes wrong.<br> \
     <p class="_oaw_section _oaw_dark_deposit">We’ll only use this to send you a link to your paper when it is in <span class="_oaw_repo">ScholarWorks</span>. By depositing, you’re agreeing to the <span class="_oaw_terms"></span>. </p> \
   </div> \
-  <div class="_oaw_section _oaw_archivable" id="_oaw_archivable_file"> \
+  <div class="_oaw_section _oaw_archivable _oaw_bronze_archivable" id="_oaw_archivable_file"> \
     <h3>We’ll check it’s legal, then promote, and preserve your work</h3> \
     <p><input type="file" name="file" id="_oaw_file" class="_oaw_form" aria-label="Upload the manuscript’s file"></p> \
     <p>By depositing, you’re agreeing to the <span class="_oaw_terms"></span>. You must also license your work <span class="_oaw_licence" style="text-transform: uppercase;">CC-BY</span>. <span class="_oaw_refs"></span></p> \
   </div> \
-  <div class="_oaw_section _oaw_oa_deposit _oaw_archivable _oaw_dark_deposit" id="_oaw_deposits"> \
+  <div class="_oaw_section _oaw_oa_deposit _oaw_archivable _oaw_bronze_archivable _oaw_dark_deposit" id="_oaw_deposits"> \
     <p><a href="#" class="_oaw_deposit btn-iu _oaw_button _oaw_loading" style="min-width:140px;" id="_oaw_deposit">Deposit</a></p> \
     <p><a href="#" class="_oaw_restart" id="_oaw_deposits_restart"><b>Do another</b></a></p> \
   </div> \
